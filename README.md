@@ -35,7 +35,7 @@ grindSpeed: 	   This variable sets how quickly it will move the grindStepDistanc
 
 
 ## Pseudocode:
-
+```
 Main menu:
     • Calibrate
     • Grind Capillary
@@ -220,3 +220,4 @@ Face Chip:
                                 ◦ Return to main menu
                     ◦ Else
                         ▪ Printscreen = “error chip distance”
+```
