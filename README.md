@@ -1,6 +1,4 @@
-       READ ME
-----------------------
-Instructions for operation:
+## Instructions for operation:
 
 When you turn on the machine, it will show you the "home screen". This screen will list the 
 OD, ID, and angle that you wish to grind at. You will initially be editing the angle, which is done
