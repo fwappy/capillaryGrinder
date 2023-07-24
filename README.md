@@ -1,3 +1,7 @@
+## Dependencies:
+
+LiquidCrystal by Arduino (available from Arduino Library Manager)
+
 ## Instructions for operation:
 
 When you turn on the machine, it will show you the "home screen". This screen will list the 
