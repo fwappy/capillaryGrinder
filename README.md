@@ -1,6 +1,6 @@
 ## Dependencies:
 
-LiquidCrystal by Arduino (available from Arduino Library Manager)
+LiquidCrystal I2C by Marco Schwartz (available from Arduino Library Manager)
 
 ## Instructions for operation:
 
