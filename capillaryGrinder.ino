@@ -198,10 +198,10 @@ void checkGrind() {
   // Calculate the percentage if we are either in the initial or final grind
   if(startPressed || finalGrind){
     double percentage = 100 - (100 * (endTime - currentMillis) / grindTime);
-    lcd.setCursor(13,1);
-    lcd.print(int(percentage));
     lcd.setCursor(15,1);
     lcd.print("%");
+    lcd.setCursor(13,1);
+    lcd.print(int(percentage));
   }
   // if it has been more than the delayInterval(which can be set at the top of the program)
   // and the start button has been pressed
