@@ -1,6 +1,7 @@
 ## Dependencies:
 
-LiquidCrystal I2C by Marco Schwartz (available from Arduino Library Manager)
+TcMenu by The Coders Corner
+
 
 ## Instructions for operation:
 
