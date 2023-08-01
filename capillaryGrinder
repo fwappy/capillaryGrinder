@@ -30,7 +30,6 @@
         "variableName": "CalibrateOffset",
         "id": 5,
         "eepromAddress": 2,
-        "functionName": "setOffset",
         "readOnly": false,
         "localOnly": false,
         "visible": true,
@@ -175,6 +174,7 @@
         "variableName": "GrindCapillaryStartGrindStart",
         "id": 12,
         "eepromAddress": -1,
+        "functionName": "startGrindCapillary",
         "readOnly": false,
         "localOnly": false,
         "visible": false,
@@ -194,6 +194,7 @@
         "variableName": "GrindCapillaryStartGrindZeroFirst",
         "id": 13,
         "eepromAddress": -1,
+        "functionName": "checkZeroed",
         "readOnly": false,
         "localOnly": false,
         "visible": true,
@@ -279,6 +280,7 @@
         "variableName": "FaceCapillaryStartGrindStart",
         "id": 17,
         "eepromAddress": -1,
+        "functionName": "startFaceCapillary",
         "readOnly": false,
         "localOnly": false,
         "visible": false,
@@ -298,6 +300,7 @@
         "variableName": "FaceCapillaryStartGrindNotZeroed",
         "id": 18,
         "eepromAddress": -1,
+        "functionName": "checkZeroed",
         "readOnly": false,
         "localOnly": false,
         "visible": true,
@@ -321,16 +324,11 @@
     },
     {
       "parentId": 4,
-      "type": "analogItem",
-      "defaultValue": "0",
+      "type": "subMenu",
       "item": {
-        "maxValue": 1000,
-        "offset": 0,
-        "divisor": 10,
-        "unitName": "um",
-        "step": 1,
-        "name": "Thin",
-        "variableName": "FaceChipThin",
+        "secured": false,
+        "name": "Parametric",
+        "variableName": "FaceChipParametric",
         "id": 19,
         "eepromAddress": -1,
         "readOnly": false,
@@ -340,7 +338,7 @@
       }
     },
     {
-      "parentId": 4,
+      "parentId": 19,
       "type": "analogItem",
       "defaultValue": "0",
       "item": {
@@ -349,28 +347,8 @@
         "divisor": 10,
         "unitName": "um",
         "step": 1,
-        "name": "Wide",
-        "variableName": "FaceChipWide",
-        "id": 20,
-        "eepromAddress": -1,
-        "readOnly": false,
-        "localOnly": false,
-        "visible": true,
-        "staticDataInRAM": false
-      }
-    },
-    {
-      "parentId": 4,
-      "type": "analogItem",
-      "defaultValue": "0",
-      "item": {
-        "maxValue": 1000,
-        "offset": 0,
-        "divisor": 10,
-        "unitName": "um",
-        "step": 1,
-        "name": "Taper",
-        "variableName": "FaceChipTaper",
+        "name": "Thin",
+        "variableName": "FaceChipParametricThin",
         "id": 21,
         "eepromAddress": -1,
         "readOnly": false,
@@ -380,7 +358,7 @@
       }
     },
     {
-      "parentId": 4,
+      "parentId": 19,
       "type": "analogItem",
       "defaultValue": "0",
       "item": {
@@ -389,8 +367,8 @@
         "divisor": 10,
         "unitName": "um",
         "step": 1,
-        "name": "TaperDepth",
-        "variableName": "FaceChipTaperDepth",
+        "name": "Wide",
+        "variableName": "FaceChipParametricWide",
         "id": 22,
         "eepromAddress": -1,
         "readOnly": false,
@@ -400,7 +378,7 @@
       }
     },
     {
-      "parentId": 4,
+      "parentId": 19,
       "type": "analogItem",
       "defaultValue": "0",
       "item": {
@@ -409,10 +387,195 @@
         "divisor": 10,
         "unitName": "um",
         "step": 1,
-        "name": "ChannelDepth",
-        "variableName": "FaceChipChannelDepth",
+        "name": "Angle",
+        "variableName": "FaceChipParametricAngle",
         "id": 23,
         "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 19,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 1000,
+        "offset": 0,
+        "divisor": 10,
+        "unitName": "um",
+        "step": 1,
+        "name": "Height",
+        "variableName": "FaceChipParametricHeight",
+        "id": 24,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 19,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 1000,
+        "offset": 0,
+        "divisor": 10,
+        "unitName": "um",
+        "step": 1,
+        "name": "Channel",
+        "variableName": "FaceChipParametricChannel",
+        "id": 25,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 19,
+      "type": "subMenu",
+      "item": {
+        "secured": false,
+        "name": "StartGrind",
+        "variableName": "FaceChipParametricStartGrind",
+        "id": 26,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 26,
+      "type": "enumItem",
+      "defaultValue": "0",
+      "item": {
+        "enumEntries": [
+          "No",
+          "Im Sure"
+        ],
+        "name": "Start",
+        "variableName": "FaceChipParametricStartGrindStart",
+        "id": 27,
+        "eepromAddress": -1,
+        "functionName": "startFaceChipParametric",
+        "readOnly": false,
+        "localOnly": false,
+        "visible": false,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 26,
+      "type": "enumItem",
+      "defaultValue": "0",
+      "item": {
+        "enumEntries": [
+          "Zero",
+          "Ignore"
+        ],
+        "name": "NotZeroed",
+        "variableName": "FaceChipParametricStartGrindNotZeroed",
+        "id": 28,
+        "eepromAddress": -1,
+        "functionName": "checkZeroed",
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 4,
+      "type": "subMenu",
+      "item": {
+        "secured": false,
+        "name": "Set Distance",
+        "variableName": "FaceChipSetDistance",
+        "id": 20,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 20,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 1000,
+        "offset": 0,
+        "divisor": 10,
+        "unitName": "um",
+        "step": 1,
+        "name": "Distance",
+        "variableName": "FaceChipSetDistanceDistance",
+        "id": 29,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 20,
+      "type": "subMenu",
+      "item": {
+        "secured": false,
+        "name": "StartGrind",
+        "variableName": "FaceChipSetDistanceStartGrind",
+        "id": 30,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 30,
+      "type": "enumItem",
+      "defaultValue": "0",
+      "item": {
+        "enumEntries": [
+          "No",
+          "Im Sure"
+        ],
+        "name": "Start",
+        "variableName": "FaceChipSetDistanceStartGrindStart",
+        "id": 31,
+        "eepromAddress": -1,
+        "functionName": "startFaceChipDistance",
+        "readOnly": false,
+        "localOnly": false,
+        "visible": false,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 30,
+      "type": "enumItem",
+      "defaultValue": "0",
+      "item": {
+        "enumEntries": [
+          "Zero",
+          "Ignore"
+        ],
+        "name": "NotZeroed",
+        "variableName": "FaceChipSetDistanceStartGrindNotZeroed",
+        "id": 32,
+        "eepromAddress": -1,
+        "functionName": "checkZeroed",
         "readOnly": false,
         "localOnly": false,
         "visible": true,

@@ -35,11 +35,24 @@ extern LiquidCrystalRenderer renderer;
 
 
 // Global Menu Item exports
-extern AnalogMenuItem menuFaceChipChannelDepth;
-extern AnalogMenuItem menuFaceChipTaperDepth;
-extern AnalogMenuItem menuFaceChipTaper;
-extern AnalogMenuItem menuFaceChipWide;
-extern AnalogMenuItem menuFaceChipThin;
+extern EnumMenuItem menuFaceChipSetDistanceStartGrindNotZeroed;
+extern EnumMenuItem menuFaceChipSetDistanceStartGrindStart;
+extern BackMenuItem menuBackFaceChipSetDistanceStartGrind;
+extern SubMenuItem menuFaceChipSetDistanceStartGrind;
+extern AnalogMenuItem menuFaceChipSetDistanceDistance;
+extern BackMenuItem menuBackFaceChipSetDistance;
+extern SubMenuItem menuFaceChipSetDistance;
+extern EnumMenuItem menuFaceChipParametricStartGrindNotZeroed;
+extern EnumMenuItem menuFaceChipParametricStartGrindStart;
+extern BackMenuItem menuBackFaceChipParametricStartGrind;
+extern SubMenuItem menuFaceChipParametricStartGrind;
+extern AnalogMenuItem menuFaceChipParametricChannel;
+extern AnalogMenuItem menuFaceChipParametricHeight;
+extern AnalogMenuItem menuFaceChipParametricAngle;
+extern AnalogMenuItem menuFaceChipParametricWide;
+extern AnalogMenuItem menuFaceChipParametricThin;
+extern BackMenuItem menuBackFaceChipParametric;
+extern SubMenuItem menuFaceChipParametric;
 extern BackMenuItem menuBackFaceChip;
 extern SubMenuItem menuFaceChip;
 extern EnumMenuItem menuFaceCapillaryStartGrindNotZeroed;
@@ -72,7 +85,11 @@ void setupMenu();
 // Callback functions must always include CALLBACK_FUNCTION after the return type
 #define CALLBACK_FUNCTION
 
-void CALLBACK_FUNCTION setOffset(int id);
+void CALLBACK_FUNCTION checkZeroed(int id);
 void CALLBACK_FUNCTION setZero(int id);
+void CALLBACK_FUNCTION startFaceCapillary(int id);
+void CALLBACK_FUNCTION startFaceChipDistance(int id);
+void CALLBACK_FUNCTION startFaceChipParametric(int id);
+void CALLBACK_FUNCTION startGrindCapillary(int id);
 
 #endif // MENU_GENERATED_CODE_H
