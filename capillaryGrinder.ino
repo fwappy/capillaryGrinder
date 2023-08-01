@@ -11,15 +11,15 @@ void loop() {
 }
 
 
-void CALLBACK_FUNCTION checkZeroed(int id) {
-    // TODO - your menu change code
-}
-
 
 void CALLBACK_FUNCTION startGrindCapillary(int id) {
     // TODO - your menu change code
 }
 
+
+void CALLBACK_FUNCTION setZeroed(int id) {
+    // TODO - your menu change code
+}
 
 
 void CALLBACK_FUNCTION startFaceChipParametric(int id) {
@@ -32,16 +32,16 @@ void CALLBACK_FUNCTION startFaceChipDistance(int id) {
 }
 
 
+void CALLBACK_FUNCTION CalibrateZero(int id) {
+    // TODO - your menu change code
+}
+
+
 void CALLBACK_FUNCTION moveOffset(int id) {
     // TODO - your menu change code
 }
 
 
 void CALLBACK_FUNCTION startFaceCapillary(int id) {
-    // TODO - your menu change code
-}
-
-
-void CALLBACK_FUNCTION setZero(int id) {
     // TODO - your menu change code
 }

@@ -40,8 +40,8 @@ extern EnumMenuItem menuFaceChipSetDistanceStartGrindStart;
 extern BackMenuItem menuBackFaceChipSetDistanceStartGrind;
 extern SubMenuItem menuFaceChipSetDistanceStartGrind;
 extern AnalogMenuItem menuFaceChipSetDistanceDistance;
-extern BackMenuItem menuBackFaceChipSetDistance;
-extern SubMenuItem menuFaceChipSetDistance;
+extern BackMenuItem menuBackFaceChipDistance;
+extern SubMenuItem menuFaceChipDistance;
 extern EnumMenuItem menuFaceChipParametricStartGrindNotZeroed;
 extern EnumMenuItem menuFaceChipParametricStartGrindStart;
 extern BackMenuItem menuBackFaceChipParametricStartGrind;
@@ -85,9 +85,9 @@ void setupMenu();
 // Callback functions must always include CALLBACK_FUNCTION after the return type
 #define CALLBACK_FUNCTION
 
-void CALLBACK_FUNCTION checkZeroed(int id);
+void CALLBACK_FUNCTION CalibrateZero(int id);
 void CALLBACK_FUNCTION moveOffset(int id);
-void CALLBACK_FUNCTION setZero(int id);
+void CALLBACK_FUNCTION setZeroed(int id);
 void CALLBACK_FUNCTION startFaceCapillary(int id);
 void CALLBACK_FUNCTION startFaceChipDistance(int id);
 void CALLBACK_FUNCTION startFaceChipParametric(int id);
