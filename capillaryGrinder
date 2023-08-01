@@ -30,6 +30,7 @@
         "variableName": "CalibrateOffset",
         "id": 5,
         "eepromAddress": 2,
+        "functionName": "moveOffset",
         "readOnly": false,
         "localOnly": false,
         "visible": true,

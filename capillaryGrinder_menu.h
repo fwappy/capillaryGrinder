@@ -86,6 +86,7 @@ void setupMenu();
 #define CALLBACK_FUNCTION
 
 void CALLBACK_FUNCTION checkZeroed(int id);
+void CALLBACK_FUNCTION moveOffset(int id);
 void CALLBACK_FUNCTION setZero(int id);
 void CALLBACK_FUNCTION startFaceCapillary(int id);
 void CALLBACK_FUNCTION startFaceChipDistance(int id);
