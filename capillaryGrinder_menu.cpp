@@ -12,30 +12,89 @@
 #include "capillaryGrinder_menu.h"
 
 // Global variable declarations
-const PROGMEM  ConnectorLocalInfo applicationInfo = { "CapillaryGrinder", "5dfce237-d428-470a-aa66-36a7f5931a23" };
-AvrEeprom glAvrRom;
+const  ConnectorLocalInfo applicationInfo = { "CapillaryGrinder", "5dfce237-d428-470a-aa66-36a7f5931a23" };
+TcMenuRemoteServer remoteServer(applicationInfo);
+ArduinoEEPROMAbstraction glArduinoEeprom(&EEPROM);
 LiquidCrystal lcd(0, 1, 2, 4, 5, 6, 7);
 LiquidCrystalRenderer renderer(lcd, 16, 2);
+NoInitialisationNeeded serialInitializer;
+SerialTagValueTransport serialTransport(&Serial);
+TagValueRemoteServerConnection serialConnection(serialTransport, serialInitializer);
 
 // Global Menu Item declarations
-AnyMenuInfo minfoFaceChip = { "Face Chip", 4, 0xffff, 0, startFaceChip };
-ActionMenuItem menuFaceChip(&minfoFaceChip, nullptr, INFO_LOCATION_RAM);
-AnyMenuInfo minfoFaceCapillary = { "Face Capillary", 3, 0xffff, 0, startFaceCapillary };
-ActionMenuItem menuFaceCapillary(&minfoFaceCapillary, &menuFaceChip, INFO_LOCATION_RAM);
-AnyMenuInfo minfoGrindCapillary = { "Grind Capillary", 2, 0xffff, 0, startGrind };
-ActionMenuItem menuGrindCapillary(&minfoGrindCapillary, &menuFaceCapillary, INFO_LOCATION_RAM);
-AnyMenuInfo minfoCalibrateZero = { "Zero", 6, 0xffff, 0, setZero };
-ActionMenuItem menuCalibrateZero(&minfoCalibrateZero, nullptr, INFO_LOCATION_RAM);
-AnyMenuInfo minfoCalibrateOffset = { "Offset", 5, 2, 0, setOffset };
-EditableLargeNumberMenuItem menuCalibrateOffset(&minfoCalibrateOffset, LargeFixedNumber(4, 0, 0U, 0U, false), true, &menuCalibrateZero, INFO_LOCATION_RAM);
-SubMenuInfo minfoCalibrate = { "Calibrate", 1, 0xffff, 0, NO_CALLBACK };
-BackMenuItem menuBackCalibrate(&minfoCalibrate, &menuCalibrateOffset, INFO_LOCATION_RAM);
-SubMenuItem menuCalibrate(&minfoCalibrate, &menuBackCalibrate, &menuGrindCapillary, INFO_LOCATION_RAM);
+const AnalogMenuInfo minfoFaceChipChannelDepth = { "ChannelDepth", 23, 0xffff, 1000, NO_CALLBACK, 0, 10, "um" };
+AnalogMenuItem menuFaceChipChannelDepth(&minfoFaceChipChannelDepth, 0, nullptr, INFO_LOCATION_PGM);
+const AnalogMenuInfo minfoFaceChipTaperDepth = { "TaperDepth", 22, 0xffff, 1000, NO_CALLBACK, 0, 10, "um" };
+AnalogMenuItem menuFaceChipTaperDepth(&minfoFaceChipTaperDepth, 0, &menuFaceChipChannelDepth, INFO_LOCATION_PGM);
+const AnalogMenuInfo minfoFaceChipTaper = { "Taper", 21, 0xffff, 1000, NO_CALLBACK, 0, 10, "um" };
+AnalogMenuItem menuFaceChipTaper(&minfoFaceChipTaper, 0, &menuFaceChipTaperDepth, INFO_LOCATION_PGM);
+const AnalogMenuInfo minfoFaceChipWide = { "Wide", 20, 0xffff, 1000, NO_CALLBACK, 0, 10, "um" };
+AnalogMenuItem menuFaceChipWide(&minfoFaceChipWide, 0, &menuFaceChipTaper, INFO_LOCATION_PGM);
+const AnalogMenuInfo minfoFaceChipThin = { "Thin", 19, 0xffff, 1000, NO_CALLBACK, 0, 10, "um" };
+AnalogMenuItem menuFaceChipThin(&minfoFaceChipThin, 0, &menuFaceChipWide, INFO_LOCATION_PGM);
+const SubMenuInfo minfoFaceChip = { "Face Chip", 4, 0xffff, 0, NO_CALLBACK };
+BackMenuItem menuBackFaceChip(&minfoFaceChip, &menuFaceChipThin, INFO_LOCATION_PGM);
+SubMenuItem menuFaceChip(&minfoFaceChip, &menuBackFaceChip, nullptr, INFO_LOCATION_PGM);
+const char enumStrFaceCapillaryStartGrindNotZeroed_0[] = "Zero";
+const char enumStrFaceCapillaryStartGrindNotZeroed_1[] = "Ignore";
+const char* const enumStrFaceCapillaryStartGrindNotZeroed[]  = { enumStrFaceCapillaryStartGrindNotZeroed_0, enumStrFaceCapillaryStartGrindNotZeroed_1 };
+const EnumMenuInfo minfoFaceCapillaryStartGrindNotZeroed = { "NotZeroed", 18, 0xffff, 1, NO_CALLBACK, enumStrFaceCapillaryStartGrindNotZeroed };
+EnumMenuItem menuFaceCapillaryStartGrindNotZeroed(&minfoFaceCapillaryStartGrindNotZeroed, 0, nullptr, INFO_LOCATION_PGM);
+const char enumStrFaceCapillaryStartGrindStart_0[] = "No";
+const char enumStrFaceCapillaryStartGrindStart_1[] = "Im Sure";
+const char* const enumStrFaceCapillaryStartGrindStart[]  = { enumStrFaceCapillaryStartGrindStart_0, enumStrFaceCapillaryStartGrindStart_1 };
+const EnumMenuInfo minfoFaceCapillaryStartGrindStart = { "Start", 17, 0xffff, 1, NO_CALLBACK, enumStrFaceCapillaryStartGrindStart };
+EnumMenuItem menuFaceCapillaryStartGrindStart(&minfoFaceCapillaryStartGrindStart, 0, &menuFaceCapillaryStartGrindNotZeroed, INFO_LOCATION_PGM);
+const SubMenuInfo minfoFaceCapillaryStartGrind = { "StartGrind", 16, 0xffff, 0, NO_CALLBACK };
+BackMenuItem menuBackFaceCapillaryStartGrind(&minfoFaceCapillaryStartGrind, &menuFaceCapillaryStartGrindStart, INFO_LOCATION_PGM);
+SubMenuItem menuFaceCapillaryStartGrind(&minfoFaceCapillaryStartGrind, &menuBackFaceCapillaryStartGrind, nullptr, INFO_LOCATION_PGM);
+const BooleanMenuInfo minfoFaceCapillaryCapillaryMotor = { "CapillaryMotor", 15, 20, 1, NO_CALLBACK, NAMING_ON_OFF };
+BooleanMenuItem menuFaceCapillaryCapillaryMotor(&minfoFaceCapillaryCapillaryMotor, true, &menuFaceCapillaryStartGrind, INFO_LOCATION_PGM);
+const AnalogMenuInfo minfoFaceCapillaryDepth = { "Depth", 14, 18, 1000, NO_CALLBACK, 0, 10, "um" };
+AnalogMenuItem menuFaceCapillaryDepth(&minfoFaceCapillaryDepth, 0, &menuFaceCapillaryCapillaryMotor, INFO_LOCATION_PGM);
+const SubMenuInfo minfoFaceCapillary = { "FaceCapillary", 3, 0xffff, 0, NO_CALLBACK };
+BackMenuItem menuBackFaceCapillary(&minfoFaceCapillary, &menuFaceCapillaryDepth, INFO_LOCATION_PGM);
+SubMenuItem menuFaceCapillary(&minfoFaceCapillary, &menuBackFaceCapillary, &menuFaceChip, INFO_LOCATION_PGM);
+const char enumStrGrindCapillaryStartGrindZeroFirst_0[] = "Zero";
+const char enumStrGrindCapillaryStartGrindZeroFirst_1[] = "Ignore";
+const char* const enumStrGrindCapillaryStartGrindZeroFirst[]  = { enumStrGrindCapillaryStartGrindZeroFirst_0, enumStrGrindCapillaryStartGrindZeroFirst_1 };
+const EnumMenuInfo minfoGrindCapillaryStartGrindZeroFirst = { "NotZeroed", 13, 0xffff, 1, NO_CALLBACK, enumStrGrindCapillaryStartGrindZeroFirst };
+EnumMenuItem menuGrindCapillaryStartGrindZeroFirst(&minfoGrindCapillaryStartGrindZeroFirst, 0, nullptr, INFO_LOCATION_PGM);
+const char enumStrGrindCapillaryStartGrindStart_0[] = "No";
+const char enumStrGrindCapillaryStartGrindStart_1[] = "Im Sure";
+const char* const enumStrGrindCapillaryStartGrindStart[]  = { enumStrGrindCapillaryStartGrindStart_0, enumStrGrindCapillaryStartGrindStart_1 };
+const EnumMenuInfo minfoGrindCapillaryStartGrindStart = { "Start", 12, 0xffff, 1, NO_CALLBACK, enumStrGrindCapillaryStartGrindStart };
+EnumMenuItem menuGrindCapillaryStartGrindStart(&minfoGrindCapillaryStartGrindStart, 0, &menuGrindCapillaryStartGrindZeroFirst, INFO_LOCATION_PGM);
+const SubMenuInfo minfoGrindCapillaryStartGrind = { "StartGrind", 11, 0xffff, 0, NO_CALLBACK };
+BackMenuItem menuBackGrindCapillaryStartGrind(&minfoGrindCapillaryStartGrind, &menuGrindCapillaryStartGrindStart, INFO_LOCATION_PGM);
+SubMenuItem menuGrindCapillaryStartGrind(&minfoGrindCapillaryStartGrind, &menuBackGrindCapillaryStartGrind, nullptr, INFO_LOCATION_PGM);
+const AnalogMenuInfo minfoGrindCapillaryFaceWidth = { "FaceWidth", 10, 16, 1000, NO_CALLBACK, 0, 10, "um" };
+AnalogMenuItem menuGrindCapillaryFaceWidth(&minfoGrindCapillaryFaceWidth, 0, &menuGrindCapillaryStartGrind, INFO_LOCATION_PGM);
+const AnalogMenuInfo minfoGrindCapillaryAngleDegrees = { "AngleDegrees", 9, 14, 9000, NO_CALLBACK, 0, 100, "d" };
+AnalogMenuItem menuGrindCapillaryAngleDegrees(&minfoGrindCapillaryAngleDegrees, 0, &menuGrindCapillaryFaceWidth, INFO_LOCATION_PGM);
+const AnalogMenuInfo minfoGrindCapillaryOuterDiameter = { "OuterDiameter", 8, 12, 1000, NO_CALLBACK, 0, 10, "um" };
+AnalogMenuItem menuGrindCapillaryOuterDiameter(&minfoGrindCapillaryOuterDiameter, 0, &menuGrindCapillaryAngleDegrees, INFO_LOCATION_PGM);
+const AnalogMenuInfo minfoGrindCapillaryInnerDiameter = { "InnerDiameter", 7, 10, 1000, NO_CALLBACK, 0, 10, "um" };
+AnalogMenuItem menuGrindCapillaryInnerDiameter(&minfoGrindCapillaryInnerDiameter, 0, &menuGrindCapillaryOuterDiameter, INFO_LOCATION_PGM);
+const SubMenuInfo minfoGrindCapillary = { "GrindCapillary", 2, 0xffff, 0, NO_CALLBACK };
+BackMenuItem menuBackGrindCapillary(&minfoGrindCapillary, &menuGrindCapillaryInnerDiameter, INFO_LOCATION_PGM);
+SubMenuItem menuGrindCapillary(&minfoGrindCapillary, &menuBackGrindCapillary, &menuFaceCapillary, INFO_LOCATION_PGM);
+const AnyMenuInfo minfoCalibrateZero = { "Zero", 6, 0xffff, 0, setZero };
+ActionMenuItem menuCalibrateZero(&minfoCalibrateZero, nullptr, INFO_LOCATION_PGM);
+const AnyMenuInfo minfoCalibrateOffset = { "Offset", 5, 2, 0, setOffset };
+EditableLargeNumberMenuItem menuCalibrateOffset(&minfoCalibrateOffset, LargeFixedNumber(4, 0, 0U, 0U, false), true, &menuCalibrateZero, INFO_LOCATION_PGM);
+const SubMenuInfo minfoCalibrate = { "Calibrate", 1, 0xffff, 0, NO_CALLBACK };
+BackMenuItem menuBackCalibrate(&minfoCalibrate, &menuCalibrateOffset, INFO_LOCATION_PGM);
+SubMenuItem menuCalibrate(&minfoCalibrate, &menuBackCalibrate, &menuGrindCapillary, INFO_LOCATION_PGM);
 
 void setupMenu() {
     // First we set up eeprom and authentication (if needed).
     setSizeBasedEEPROMStorageEnabled(true);
-    menuMgr.setEepromRef(&glAvrRom);
+    menuMgr.setEepromRef(&glArduinoEeprom);
+    // Now add any readonly, non-remote and visible flags.
+    menuFaceCapillaryStartGrindStart.setVisible(false);
+    menuGrindCapillaryStartGrindStart.setVisible(false);
+
     // Code generated by plugins.
     Wire.begin();
     lcd.setIoAbstraction(ioFrom8574(0x27, 0xff, &Wire));
@@ -44,6 +103,7 @@ void setupMenu() {
     lcd.configureBacklightPin(3);
     lcd.backlight();
     switches.init(internalDigitalIo(), SWITCHES_POLL_EVERYTHING, true);
-    menuMgr.initForUpDownOk(&renderer, &menuCalibrate, 3, 2, 8, 20);
+    menuMgr.initForEncoder(&renderer, &menuCalibrate, 2, 3, 8);
+    remoteServer.addConnection(&serialConnection);
 }
 

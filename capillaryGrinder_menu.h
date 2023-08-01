@@ -16,15 +16,18 @@
 #include <Wire.h>
 #include <LiquidCrystalIO.h>
 #include <IoAbstractionWire.h>
+#include <RemoteConnector.h>
+#include "SerialTransport.h"
 #include <RuntimeMenuItem.h>
 #include <EditableLargeNumberMenuItem.h>
 #include <IoAbstraction.h>
 #include <EepromItemStorage.h>
-#include <EepromAbstraction.h>
+#include <ArduinoEEPROMAbstraction.h>
 #include "tcMenuLiquidCrystal.h"
 
 // variables we declare that you may need to access
 extern const PROGMEM ConnectorLocalInfo applicationInfo;
+extern TcMenuRemoteServer remoteServer;
 extern LiquidCrystal lcd;
 extern LiquidCrystalRenderer renderer;
 
@@ -32,17 +35,33 @@ extern LiquidCrystalRenderer renderer;
 
 
 // Global Menu Item exports
-extern AnyMenuInfo minfoFaceChip;
-extern ActionMenuItem menuFaceChip;
-extern AnyMenuInfo minfoFaceCapillary;
-extern ActionMenuItem menuFaceCapillary;
-extern AnyMenuInfo minfoGrindCapillary;
-extern ActionMenuItem menuGrindCapillary;
-extern AnyMenuInfo minfoCalibrateZero;
+extern AnalogMenuItem menuFaceChipChannelDepth;
+extern AnalogMenuItem menuFaceChipTaperDepth;
+extern AnalogMenuItem menuFaceChipTaper;
+extern AnalogMenuItem menuFaceChipWide;
+extern AnalogMenuItem menuFaceChipThin;
+extern BackMenuItem menuBackFaceChip;
+extern SubMenuItem menuFaceChip;
+extern EnumMenuItem menuFaceCapillaryStartGrindNotZeroed;
+extern EnumMenuItem menuFaceCapillaryStartGrindStart;
+extern BackMenuItem menuBackFaceCapillaryStartGrind;
+extern SubMenuItem menuFaceCapillaryStartGrind;
+extern BooleanMenuItem menuFaceCapillaryCapillaryMotor;
+extern AnalogMenuItem menuFaceCapillaryDepth;
+extern BackMenuItem menuBackFaceCapillary;
+extern SubMenuItem menuFaceCapillary;
+extern EnumMenuItem menuGrindCapillaryStartGrindZeroFirst;
+extern EnumMenuItem menuGrindCapillaryStartGrindStart;
+extern BackMenuItem menuBackGrindCapillaryStartGrind;
+extern SubMenuItem menuGrindCapillaryStartGrind;
+extern AnalogMenuItem menuGrindCapillaryFaceWidth;
+extern AnalogMenuItem menuGrindCapillaryAngleDegrees;
+extern AnalogMenuItem menuGrindCapillaryOuterDiameter;
+extern AnalogMenuItem menuGrindCapillaryInnerDiameter;
+extern BackMenuItem menuBackGrindCapillary;
+extern SubMenuItem menuGrindCapillary;
 extern ActionMenuItem menuCalibrateZero;
-extern AnyMenuInfo minfoCalibrateOffset;
 extern EditableLargeNumberMenuItem menuCalibrateOffset;
-extern SubMenuInfo minfoCalibrate;
 extern BackMenuItem menuBackCalibrate;
 extern SubMenuItem menuCalibrate;
 
@@ -55,8 +74,5 @@ void setupMenu();
 
 void CALLBACK_FUNCTION setOffset(int id);
 void CALLBACK_FUNCTION setZero(int id);
-void CALLBACK_FUNCTION startFaceCapillary(int id);
-void CALLBACK_FUNCTION startFaceChip(int id);
-void CALLBACK_FUNCTION startGrind(int id);
 
 #endif // MENU_GENERATED_CODE_H

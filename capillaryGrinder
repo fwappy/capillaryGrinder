@@ -15,7 +15,7 @@
         "readOnly": false,
         "localOnly": false,
         "visible": true,
-        "staticDataInRAM": true
+        "staticDataInRAM": false
       }
     },
     {
@@ -34,7 +34,7 @@
         "readOnly": false,
         "localOnly": false,
         "visible": true,
-        "staticDataInRAM": true
+        "staticDataInRAM": false
       }
     },
     {
@@ -49,61 +49,383 @@
         "readOnly": false,
         "localOnly": false,
         "visible": true,
-        "staticDataInRAM": true
+        "staticDataInRAM": false
       }
     },
     {
       "parentId": 0,
-      "type": "actionMenu",
+      "type": "subMenu",
       "item": {
-        "name": "Grind Capillary",
+        "secured": false,
+        "name": "GrindCapillary",
         "variableName": "GrindCapillary",
         "id": 2,
         "eepromAddress": -1,
-        "functionName": "startGrind",
         "readOnly": false,
         "localOnly": false,
         "visible": true,
-        "staticDataInRAM": true
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 2,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 1000,
+        "offset": 0,
+        "divisor": 10,
+        "unitName": "um",
+        "step": 1,
+        "name": "InnerDiameter",
+        "variableName": "GrindCapillaryInnerDiameter",
+        "id": 7,
+        "eepromAddress": 10,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 2,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 1000,
+        "offset": 0,
+        "divisor": 10,
+        "unitName": "um",
+        "step": 1,
+        "name": "OuterDiameter",
+        "variableName": "GrindCapillaryOuterDiameter",
+        "id": 8,
+        "eepromAddress": 12,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 2,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 9000,
+        "offset": 0,
+        "divisor": 100,
+        "unitName": "d",
+        "step": 1,
+        "name": "AngleDegrees",
+        "variableName": "GrindCapillaryAngleDegrees",
+        "id": 9,
+        "eepromAddress": 14,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 2,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 1000,
+        "offset": 0,
+        "divisor": 10,
+        "unitName": "um",
+        "step": 1,
+        "name": "FaceWidth",
+        "variableName": "GrindCapillaryFaceWidth",
+        "id": 10,
+        "eepromAddress": 16,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 2,
+      "type": "subMenu",
+      "item": {
+        "secured": false,
+        "name": "StartGrind",
+        "variableName": "GrindCapillaryStartGrind",
+        "id": 11,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 11,
+      "type": "enumItem",
+      "defaultValue": "0",
+      "item": {
+        "enumEntries": [
+          "No",
+          "Im Sure"
+        ],
+        "name": "Start",
+        "variableName": "GrindCapillaryStartGrindStart",
+        "id": 12,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": false,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 11,
+      "type": "enumItem",
+      "defaultValue": "0",
+      "item": {
+        "enumEntries": [
+          "Zero",
+          "Ignore"
+        ],
+        "name": "NotZeroed",
+        "variableName": "GrindCapillaryStartGrindZeroFirst",
+        "id": 13,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
       }
     },
     {
       "parentId": 0,
-      "type": "actionMenu",
+      "type": "subMenu",
       "item": {
-        "name": "Face Capillary",
+        "secured": false,
+        "name": "FaceCapillary",
         "variableName": "FaceCapillary",
         "id": 3,
         "eepromAddress": -1,
-        "functionName": "startFaceCapillary",
         "readOnly": false,
         "localOnly": false,
         "visible": true,
-        "staticDataInRAM": true
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 3,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 1000,
+        "offset": 0,
+        "divisor": 10,
+        "unitName": "um",
+        "step": 1,
+        "name": "Depth",
+        "variableName": "FaceCapillaryDepth",
+        "id": 14,
+        "eepromAddress": 18,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 3,
+      "type": "boolItem",
+      "defaultValue": "true",
+      "item": {
+        "naming": "ON_OFF",
+        "name": "CapillaryMotor",
+        "variableName": "FaceCapillaryCapillaryMotor",
+        "id": 15,
+        "eepromAddress": 20,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 3,
+      "type": "subMenu",
+      "item": {
+        "secured": false,
+        "name": "StartGrind",
+        "variableName": "FaceCapillaryStartGrind",
+        "id": 16,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 16,
+      "type": "enumItem",
+      "defaultValue": "0",
+      "item": {
+        "enumEntries": [
+          "No",
+          "Im Sure"
+        ],
+        "name": "Start",
+        "variableName": "FaceCapillaryStartGrindStart",
+        "id": 17,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": false,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 16,
+      "type": "enumItem",
+      "defaultValue": "0",
+      "item": {
+        "enumEntries": [
+          "Zero",
+          "Ignore"
+        ],
+        "name": "NotZeroed",
+        "variableName": "FaceCapillaryStartGrindNotZeroed",
+        "id": 18,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
       }
     },
     {
       "parentId": 0,
-      "type": "actionMenu",
+      "type": "subMenu",
       "item": {
+        "secured": false,
         "name": "Face Chip",
         "variableName": "FaceChip",
         "id": 4,
         "eepromAddress": -1,
-        "functionName": "startFaceChip",
         "readOnly": false,
         "localOnly": false,
         "visible": true,
-        "staticDataInRAM": true
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 4,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 1000,
+        "offset": 0,
+        "divisor": 10,
+        "unitName": "um",
+        "step": 1,
+        "name": "Thin",
+        "variableName": "FaceChipThin",
+        "id": 19,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 4,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 1000,
+        "offset": 0,
+        "divisor": 10,
+        "unitName": "um",
+        "step": 1,
+        "name": "Wide",
+        "variableName": "FaceChipWide",
+        "id": 20,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 4,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 1000,
+        "offset": 0,
+        "divisor": 10,
+        "unitName": "um",
+        "step": 1,
+        "name": "Taper",
+        "variableName": "FaceChipTaper",
+        "id": 21,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 4,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 1000,
+        "offset": 0,
+        "divisor": 10,
+        "unitName": "um",
+        "step": 1,
+        "name": "TaperDepth",
+        "variableName": "FaceChipTaperDepth",
+        "id": 22,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
+      }
+    },
+    {
+      "parentId": 4,
+      "type": "analogItem",
+      "defaultValue": "0",
+      "item": {
+        "maxValue": 1000,
+        "offset": 0,
+        "divisor": 10,
+        "unitName": "um",
+        "step": 1,
+        "name": "ChannelDepth",
+        "variableName": "FaceChipChannelDepth",
+        "id": 23,
+        "eepromAddress": -1,
+        "readOnly": false,
+        "localOnly": false,
+        "visible": true,
+        "staticDataInRAM": false
       }
     }
   ],
   "codeOptions": {
-    "embeddedPlatform": "ARDUINO",
+    "embeddedPlatform": "ARDUINO32",
     "lastDisplayUuid": "d4c84106-fa87-4024-b91e-053e17a52b8f",
-    "lastInputUuid": "2a3ae3ba-05f4-4c9c-aad3-3ddc88df9049",
+    "lastInputUuid": "6dd87e7d-e751-4912-a70d-91793b1d3d87",
     "lastRemoteUuids": [
-      "2c101fec-1f7d-4ff3-8d2b-992ad41e7fcb"
+      "1e38dc42-672d-4c1c-a393-2c7632bf6c5c"
     ],
     "lastThemeUuid": "2026a7f2-0d5b-43f5-9f98-4f0eacac4c0e",
     "applicationUUID": "5dfce237-d428-470a-aa66-36a7f5931a23",
@@ -136,7 +458,7 @@
       },
       {
         "name": "UNO_OR_FULL",
-        "latestValue": "unoLcd",
+        "latestValue": "fullLcd",
         "subsystem": "DISPLAY"
       },
       {
@@ -155,13 +477,18 @@
         "subsystem": "INPUT"
       },
       {
-        "name": "ENCODER_UP_PIN",
+        "name": "ENCODER_PIN_A",
         "latestValue": "2",
         "subsystem": "INPUT"
       },
       {
-        "name": "ENCODER_DOWN_PIN",
+        "name": "ENCODER_PIN_B",
         "latestValue": "3",
+        "subsystem": "INPUT"
+      },
+      {
+        "name": "ENCODER_PIN_OK",
+        "latestValue": "8",
         "subsystem": "INPUT"
       },
       {
@@ -175,26 +502,26 @@
         "subsystem": "INPUT"
       },
       {
-        "name": "ENCODER_OK_PIN",
-        "latestValue": "8",
-        "subsystem": "INPUT"
-      },
-      {
-        "name": "ENC_KEY_REPEAT",
-        "latestValue": "20",
-        "subsystem": "INPUT"
-      },
-      {
         "name": "PULLUP_LOGIC",
         "latestValue": "true",
         "subsystem": "INPUT"
+      },
+      {
+        "name": "ENCODER_IS_QUARTER_CYCLE",
+        "latestValue": "false",
+        "subsystem": "INPUT"
+      },
+      {
+        "name": "SERIAL_PORT",
+        "latestValue": "Serial",
+        "subsystem": "REMOTE"
       }
     ],
     "namingRecursive": true,
     "useCppMain": false,
     "saveLocation": "ALL_TO_CURRENT",
     "usingSizedEEPROMStorage": true,
-    "eepromDefinition": "avr:",
+    "eepromDefinition": "eeprom:",
     "authenticatorDefinition": "",
     "projectIoExpanders": [
       "deviceIO:"
