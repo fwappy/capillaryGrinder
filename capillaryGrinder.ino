@@ -12,7 +12,6 @@ void loop() {
 }
 
 
-
 void CALLBACK_FUNCTION setZeroed(int id) {
     // if selection is "ignore" or (id = NULL)
     //  Make start button visible/hide not zeroed selector for all categories
@@ -30,7 +29,7 @@ void CALLBACK_FUNCTION CalibrateZero(int id) {
 
 
 void CALLBACK_FUNCTION moveOffset(int id) {
-    // move to match currentOffset to offset
+    // move to match currentOffset to menu offset
 }
 
 
