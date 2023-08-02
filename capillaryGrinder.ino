@@ -55,20 +55,20 @@ void CALLBACK_FUNCTION moveOffset(int id) {
 
 
 void CALLBACK_FUNCTION startGrindCapillary(int id) {
-    // TODO - your menu change code
+    // TODO
 }
 
 
 void CALLBACK_FUNCTION startFaceCapillary(int id) {
-    // TODO - your menu change code
+    // TODO
 }
 
 
 void CALLBACK_FUNCTION startFaceChipParametric(int id) {
-    // TODO - your menu change code
+    // TODO
 }
 
 
 void CALLBACK_FUNCTION startFaceChipDistance(int id) {
-    // TODO - your menu change code
+    // TODO
 }
