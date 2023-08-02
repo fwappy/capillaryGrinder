@@ -642,17 +642,17 @@
       },
       {
         "name": "ENCODER_PIN_A",
-        "latestValue": "2",
+        "latestValue": "pinEncoderA",
         "subsystem": "INPUT"
       },
       {
         "name": "ENCODER_PIN_B",
-        "latestValue": "3",
+        "latestValue": "pinEncoderB",
         "subsystem": "INPUT"
       },
       {
         "name": "ENCODER_PIN_OK",
-        "latestValue": "8",
+        "latestValue": "pinEncoderButton",
         "subsystem": "INPUT"
       },
       {

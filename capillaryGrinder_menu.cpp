@@ -139,7 +139,7 @@ void setupMenu() {
     lcd.configureBacklightPin(3);
     lcd.backlight();
     switches.init(internalDigitalIo(), SWITCHES_POLL_EVERYTHING, true);
-    menuMgr.initForEncoder(&renderer, &menuCalibrate, 2, 3, 8);
+    menuMgr.initForEncoder(&renderer, &menuCalibrate, pinEncoderA, pinEncoderB, pinEncoderButton);
     remoteServer.addConnection(&serialConnection);
 }
 
