@@ -6,14 +6,15 @@ const int pinEncoderB = 3;
 const int pinEncoderButton = 4;
 
 // Z-axis Stepper Motor Pins
-const int pinCapillaryStep = 5;
-const int pinCapillaryDirection = 6;
-const int pinCapillaryEnable = 7;
+const int pinMotorZStep = 5;
+const int pinMotorZDirection = 6;
+const int pinMotorZEnable = 7;
+const int stepsPerMicronZ = 10;
 
 // Capillary Stepper Motor Pins
-const int pinCapillaryStep = 8;
-const int pinCapillaryDirection = 9;
-const int pinCapillaryEnable = 10;
+const int pinMotorCapillaryStep = 8;
+const int pinMotorCapillaryDirection = 9;
+const int pinMotorCapillaryEnable = 10;
 
 // Global Variables
 
@@ -29,6 +30,27 @@ void setup() {
 
 void loop() {
     taskManager.runLoop();
+}
+
+
+void moveZAxis(long distance, int speed) {
+    // Set Direction based on +/- distance
+    digitalWrite(pinMotorZDirection, distance > 0);
+  
+    // Calculate Steps based on distance
+    long steps = abs(distance) * stepsPerMicronZ;
+  
+    // Calculate Delay Time based on speed
+    int delayTime = ;
+
+    // Move Number of Steps
+    for(int x = 0; x < steps; x++){
+
+    digitalWrite(pinMotorZStep, HIGH); 
+    delayMicroseconds(delayTime); 
+    digitalWrite(pinMotorZStep, LOW); 
+    delayMicroseconds(delayTime);
+  }
 }
 
 
