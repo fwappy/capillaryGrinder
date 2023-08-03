@@ -18,6 +18,7 @@ int internalMotorCapillaryStepState = LOW;
 
 void setup() {
     Serial.begin(9600);
+    setupMenu();
     
     internalDigitalDevice().pinMode(pinMotorZStep, OUTPUT);
     internalDigitalDevice().pinMode(pinMotorZDirection, OUTPUT);
@@ -26,9 +27,6 @@ void setup() {
     internalDigitalDevice().pinMode(pinMotorCapillaryStep, OUTPUT);
     internalDigitalDevice().pinMode(pinMotorCapillaryDirection, OUTPUT);
     internalDigitalDevice().pinMode(pinMotorCapillaryEnable, OUTPUT);
-    
-    setupMenu();
-
 }
 
 void loop() {
@@ -53,14 +51,14 @@ void moveZAxis(long distance, int speed) {  // speed in um/sec
     }
 }
 
-void internalMotorZStepHigh() {  // function for TaskManagerIO to tell motor to take step
+  void internalMotorZStepHigh() {  // function for TaskManagerIO to tell motor to take step
     internalDigitalDevice().digitalWrite(pinMotorZStep,HIGH);
-}
+  }
 
 
-void internalMotorZStepLow() {  // function for TaskManagerIO to tell motor to take step
+  void internalMotorZStepLow() {  // function for TaskManagerIO to tell motor to take step
     internalDigitalDevice().digitalWrite(pinMotorZStep,LOW);
-}
+  }
 
 
 void startCapillary(int speed) {  //speed in rpm
@@ -69,11 +67,11 @@ void startCapillary(int speed) {  //speed in rpm
     taskIdCapillary = taskManager.schedule(repeatMillis(delayTime), internalCapillaryStep);
 }
 
-void internalCapillaryStep() {  // function for TaskManagerIO to tell motor to take step
-  internalDigitalDevice().digitalWriteS(pinMotorCapillaryStep, internalMotorCapillaryStepState);
+  void internalCapillaryStep() {  // function for TaskManagerIO to tell motor to take step
+    internalDigitalDevice().digitalWriteS(pinMotorCapillaryStep, internalMotorCapillaryStepState);
 
-  internalMotorCapillaryStepState = !internalMotorCapillaryStepState; 
-}
+    internalMotorCapillaryStepState = !internalMotorCapillaryStepState; 
+  }
 
 
 void stopCapillary() {

@@ -313,7 +313,7 @@
       "type": "subMenu",
       "item": {
         "secured": false,
-        "name": "Face Chip",
+        "name": "FaceChip",
         "variableName": "FaceChip",
         "id": 4,
         "eepromAddress": -1,

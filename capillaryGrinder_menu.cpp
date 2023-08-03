@@ -66,7 +66,7 @@ AnalogMenuItem menuFaceChipParametricThin(&minfoFaceChipParametricThin, 0, &menu
 const SubMenuInfo minfoFaceChipParametric = { "Parametric", 19, 0xffff, 0, NO_CALLBACK };
 BackMenuItem menuBackFaceChipParametric(&minfoFaceChipParametric, &menuFaceChipParametricThin, INFO_LOCATION_PGM);
 SubMenuItem menuFaceChipParametric(&minfoFaceChipParametric, &menuBackFaceChipParametric, &menuFaceChipDistance, INFO_LOCATION_PGM);
-const SubMenuInfo minfoFaceChip = { "Face Chip", 4, 0xffff, 0, NO_CALLBACK };
+const SubMenuInfo minfoFaceChip = { "FaceChip", 4, 0xffff, 0, NO_CALLBACK };
 BackMenuItem menuBackFaceChip(&minfoFaceChip, &menuFaceChipParametric, INFO_LOCATION_PGM);
 SubMenuItem menuFaceChip(&minfoFaceChip, &menuBackFaceChip, nullptr, INFO_LOCATION_PGM);
 const char enumStrFaceCapillaryStartGrindNotZeroed_0[] = "Zero";
