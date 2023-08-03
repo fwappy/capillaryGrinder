@@ -82,6 +82,13 @@ void CALLBACK_FUNCTION setZeroed(int id) {
     // if selection is "ignore" or (id = NULL)
     //  Make start button visible/hide not zeroed selector for all categories
     // if selection is "zero" call CalibrateZero
+    
+
+    if (id.getCurrentValue() == "zero") {  //this is wrong, but i dont know what id should be
+        // call CalibrateZero
+    } else {
+        //  Make start button visible/hide not zeroed selector for all categories
+    }
 }
 
 void CALLBACK_FUNCTION CalibrateZero(int id) {
