@@ -10,14 +10,22 @@ const int stepsPerMicronZ = 10;
 const int pinMotorCapillaryStep = 8;
 const int pinMotorCapillaryDirection = 9;
 const int pinMotorCapillaryEnable = 10;
+const int stepsPerRevCapillary = 200;
 
 // Global Variables
-
+uint8_t taskIdCapillary;
+int internalMotorCapillaryStepState = LOW;
 
 void setup() {
     Serial.begin(9600);
-
-    // Setup Code goes here     
+    
+    internalDigitalDevice().pinMode(pinMotorZStep, OUTPUT);
+    internalDigitalDevice().pinMode(pinMotorZDirection, OUTPUT);
+    internalDigitalDevice().pinMode(pinMotorZEnable, OUTPUT);
+    
+    internalDigitalDevice().pinMode(pinMotorCapillaryStep, OUTPUT);
+    internalDigitalDevice().pinMode(pinMotorCapillaryDirection, OUTPUT);
+    internalDigitalDevice().pinMode(pinMotorCapillaryEnable, OUTPUT);
     
     setupMenu();
 
@@ -28,7 +36,7 @@ void loop() {
 }
 
 
-void moveZAxis(long distance, int speed) {
+void moveZAxis(long distance, int speed) {  // speed in um/sec
     // Set Direction based on +/- distance
     digitalWrite(pinMotorZDirection, distance > 0);
   
@@ -36,19 +44,41 @@ void moveZAxis(long distance, int speed) {
     long steps = abs(distance) * stepsPerMicronZ;
   
     // Calculate Delay Time based on speed
-    int delayTime = 1/speed; // find correct correction factor
+    int delayTime = 1/(2000*stepsPerMicronZ*speed); // double check this
 
     // Move Number of Steps
     for(int x = 0; x < steps; x++){
+      taskManager.schedule(onceMillis(delayTime), internalMotorZStepHigh);
+      taskManager.schedule(onceMillis(delayTime), internalMotorZStepLow);
+    }
+}
 
-    digitalWrite(pinMotorZStep, HIGH); 
-    delayMicroseconds(delayTime); 
-    digitalWrite(pinMotorZStep, LOW); 
-    delayMicroseconds(delayTime);
-  }
+void internalMotorZStepHigh() {  // function for TaskManagerIO to tell motor to take step
+    internalDigitalDevice().digitalWrite(pinMotorZStep,HIGH);
 }
 
 
+void internalMotorZStepLow() {  // function for TaskManagerIO to tell motor to take step
+    internalDigitalDevice().digitalWrite(pinMotorZStep,LOW);
+}
+
+
+void startCapillary(int speed) {  //speed in rpm
+    int delayTime = 1/(2*stepsPerRevCapillary*speed);  // most definitely incorrect
+  
+    taskIdCapillary = taskManager.schedule(repeatMillis(delayTime), internalCapillaryStep);
+}
+
+void internalCapillaryStep() {  // function for TaskManagerIO to tell motor to take step
+  internalDigitalDevice().digitalWriteS(pinMotorCapillaryStep, internalMotorCapillaryStepState);
+
+  internalMotorCapillaryStepState = !internalMotorCapillaryStepState; 
+}
+
+
+void stopCapillary() {
+    taskManager.cancelTask(taskIdCapillary);
+}
 
 void CALLBACK_FUNCTION setZeroed(int id) {
     // if selection is "ignore" or (id = NULL)
