@@ -1,10 +1,5 @@
 #include "capillaryGrinder_menu.h"
 
-// Input Encoder Pins
-const int pinEncoderA = 2;
-const int pinEncoderB = 3;
-const int pinEncoderButton = 4;
-
 // Z-axis Stepper Motor Pins
 const int pinMotorZStep = 5;
 const int pinMotorZDirection = 6;
@@ -41,7 +36,7 @@ void moveZAxis(long distance, int speed) {
     long steps = abs(distance) * stepsPerMicronZ;
   
     // Calculate Delay Time based on speed
-    int delayTime = ;
+    int delayTime = 1/speed; // find correct correction factor
 
     // Move Number of Steps
     for(int x = 0; x < steps; x++){
