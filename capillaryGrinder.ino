@@ -145,25 +145,29 @@ void CALLBACK_FUNCTION CalibrateZero(int id) {
 
 
 void CALLBACK_FUNCTION moveOffset(int id) {
-    // move to match currentOffset to menu offset
+//    moveMotorZ(CalibrateOffset.getCurrentValue(), 10);
 }
 
 
 void CALLBACK_FUNCTION startGrindCapillary(int id) {
+    menuMgr.save();
     // TODO
 }
 
 
 void CALLBACK_FUNCTION startFaceCapillary(int id) {
+    menuMgr.save();
     // TODO
 }
 
 
 void CALLBACK_FUNCTION startFaceChipParametric(int id) {
+    menuMgr.save();
     // TODO
 }
 
 
 void CALLBACK_FUNCTION startFaceChipDistance(int id) {
+    menuMgr.save();
     // TODO
 }
