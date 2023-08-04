@@ -22,7 +22,7 @@ unsigned long internalMotorZStepCount = 0;
 unsigned long internalMotorZStepGoal;
 
 // Declare Default Values
-void CALLBACK_FUNCTION CalibrateZero(int id = -1);
+void CalibrateZero(int id = -1);
 
 void setup() {
     Serial.begin(9600);
