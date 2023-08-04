@@ -63,7 +63,7 @@ extern BooleanMenuItem menuFaceCapillaryCapillaryMotor;
 extern AnalogMenuItem menuFaceCapillaryDepth;
 extern BackMenuItem menuBackFaceCapillary;
 extern SubMenuItem menuFaceCapillary;
-extern EnumMenuItem menuGrindCapillaryStartGrindZeroFirst;
+extern EnumMenuItem menuGrindCapillaryStartGrindNotZeroed;
 extern EnumMenuItem menuGrindCapillaryStartGrindStart;
 extern BackMenuItem menuBackGrindCapillaryStartGrind;
 extern SubMenuItem menuGrindCapillaryStartGrind;
