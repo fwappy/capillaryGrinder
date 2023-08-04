@@ -41,21 +41,20 @@ void loop() {
     taskManager.runLoop();
 }
 
-
-void moveMotorZ(long distance, int speed) {  // speed in um/sec
+void moveMotorZ(long position, int speed) {  // speed in um/sec
     // Set Direction based on +/- distance
     digitalWrite(motorZDirectionPin, distance > 0);
   
-    // Calculate Steps based on distance
-    internalMotorZStepGoal = internalMotorZStepCount+(distance * motorZstepsPerMicron);
+    // Calculate Steps based on position
+    internalMotorZStepGoal = (distance * motorZstepsPerMicron);
 
     // Calculate Delay Time based on speed
     int delayTime = 1/(2000*motorZstepsPerMicron*speed); // double check this
 
-    if (distance >= 0) {
+    if (position >= 0) {
         digitalWrite(motorZDirectionPin, HIGH);
         motorZTaskId = taskManager.schedule(repeatMillis(delayTime), internalMotorZStepInc); 
-    } else if (distance < 0) {
+    } else if (position < 0) {
         digitalWrite(motorZDirectionPin, LOW);
         motorZTaskId = taskManager.schedule(repeatMillis(delayTime), internalMotorZStepDec); 
     }    
