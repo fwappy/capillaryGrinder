@@ -1,3 +1,6 @@
+//TODO - function that displays a message when the grind is in progress (progress bar?) and allows you to stop grind by clicking
+
+
 #include "capillaryGrinder_menu.h"
 
 // Z-axis Stepper Motor Pins
