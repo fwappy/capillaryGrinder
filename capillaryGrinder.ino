@@ -41,12 +41,16 @@ void loop() {
     taskManager.runLoop();
 }
 
+long MotorZPosition(){
+  return (internalMotorZStepCount / motorZstepsPerMicron);
+}
+
 void moveMotorZ(long position, int speed) {  // speed in um/sec
     // Set Direction based on +/- distance
-    digitalWrite(motorZDirectionPin, distance > 0);
+    digitalWrite(motorZDirectionPin, position > 0);
   
     // Calculate Steps based on position
-    internalMotorZStepGoal = (distance * motorZstepsPerMicron);
+    internalMotorZStepGoal = (position * motorZstepsPerMicron);
 
     // Calculate Delay Time based on speed
     int delayTime = 1/(2000*motorZstepsPerMicron*speed); // double check this
