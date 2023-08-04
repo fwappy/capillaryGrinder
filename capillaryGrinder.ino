@@ -18,8 +18,8 @@ bool internalMotorCapillaryStepState = LOW;
 
 uint8_t motorZTaskId;
 bool internalMotorZStepState = LOW;
-unsigned long internalMotorZStepCount = 0;
-unsigned long internalMotorZStepGoal;
+long internalMotorZStepCount = 0;
+long internalMotorZStepGoal;
 
 // Declare Default Values
 void CalibrateZero(int id = -1);
@@ -41,11 +41,11 @@ void loop() {
     taskManager.runLoop();
 }
 
-long MotorZPosition(){
+int MotorZPosition(){
   return (internalMotorZStepCount / motorZstepsPerMicron);
 }
 
-void moveMotorZ(long position, int speed) {  // speed in um/sec
+void moveMotorZ(int position, int speed) {  // speed in um/sec
     // Set Direction based on +/- distance
     digitalWrite(motorZDirectionPin, position > 0);
   
