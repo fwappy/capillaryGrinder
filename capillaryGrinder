@@ -179,7 +179,7 @@
         "readOnly": false,
         "localOnly": false,
         "visible": false,
-        "staticDataInRAM": false
+        "staticDataInRAM": true
       }
     },
     {
@@ -199,7 +199,7 @@
         "readOnly": false,
         "localOnly": false,
         "visible": true,
-        "staticDataInRAM": false
+        "staticDataInRAM": true
       }
     },
     {
@@ -285,7 +285,7 @@
         "readOnly": false,
         "localOnly": false,
         "visible": false,
-        "staticDataInRAM": false
+        "staticDataInRAM": true
       }
     },
     {
@@ -305,7 +305,7 @@
         "readOnly": false,
         "localOnly": false,
         "visible": true,
-        "staticDataInRAM": false
+        "staticDataInRAM": true
       }
     },
     {
@@ -470,7 +470,7 @@
         "readOnly": false,
         "localOnly": false,
         "visible": false,
-        "staticDataInRAM": false
+        "staticDataInRAM": true
       }
     },
     {
@@ -490,7 +490,7 @@
         "readOnly": false,
         "localOnly": false,
         "visible": true,
-        "staticDataInRAM": false
+        "staticDataInRAM": true
       }
     },
     {
@@ -560,7 +560,7 @@
         "readOnly": false,
         "localOnly": false,
         "visible": false,
-        "staticDataInRAM": false
+        "staticDataInRAM": true
       }
     },
     {
@@ -580,7 +580,7 @@
         "readOnly": false,
         "localOnly": false,
         "visible": true,
-        "staticDataInRAM": false
+        "staticDataInRAM": true
       }
     }
   ],

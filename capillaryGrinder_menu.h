@@ -35,14 +35,18 @@ extern LiquidCrystalRenderer renderer;
 
 
 // Global Menu Item exports
+extern EnumMenuInfo minfoFaceChipSetDistanceStartGrindNotZeroed;
 extern EnumMenuItem menuFaceChipSetDistanceStartGrindNotZeroed;
+extern EnumMenuInfo minfoFaceChipSetDistanceStartGrindStart;
 extern EnumMenuItem menuFaceChipSetDistanceStartGrindStart;
 extern BackMenuItem menuBackFaceChipSetDistanceStartGrind;
 extern SubMenuItem menuFaceChipSetDistanceStartGrind;
 extern AnalogMenuItem menuFaceChipSetDistanceDistance;
 extern BackMenuItem menuBackFaceChipDistance;
 extern SubMenuItem menuFaceChipDistance;
+extern EnumMenuInfo minfoFaceChipParametricStartGrindNotZeroed;
 extern EnumMenuItem menuFaceChipParametricStartGrindNotZeroed;
+extern EnumMenuInfo minfoFaceChipParametricStartGrindStart;
 extern EnumMenuItem menuFaceChipParametricStartGrindStart;
 extern BackMenuItem menuBackFaceChipParametricStartGrind;
 extern SubMenuItem menuFaceChipParametricStartGrind;
@@ -55,7 +59,9 @@ extern BackMenuItem menuBackFaceChipParametric;
 extern SubMenuItem menuFaceChipParametric;
 extern BackMenuItem menuBackFaceChip;
 extern SubMenuItem menuFaceChip;
+extern EnumMenuInfo minfoFaceCapillaryStartGrindNotZeroed;
 extern EnumMenuItem menuFaceCapillaryStartGrindNotZeroed;
+extern EnumMenuInfo minfoFaceCapillaryStartGrindStart;
 extern EnumMenuItem menuFaceCapillaryStartGrindStart;
 extern BackMenuItem menuBackFaceCapillaryStartGrind;
 extern SubMenuItem menuFaceCapillaryStartGrind;
@@ -63,7 +69,9 @@ extern BooleanMenuItem menuFaceCapillaryCapillaryMotor;
 extern AnalogMenuItem menuFaceCapillaryDepth;
 extern BackMenuItem menuBackFaceCapillary;
 extern SubMenuItem menuFaceCapillary;
+extern EnumMenuInfo minfoGrindCapillaryStartGrindNotZeroed;
 extern EnumMenuItem menuGrindCapillaryStartGrindNotZeroed;
+extern EnumMenuInfo minfoGrindCapillaryStartGrindStart;
 extern EnumMenuItem menuGrindCapillaryStartGrindStart;
 extern BackMenuItem menuBackGrindCapillaryStartGrind;
 extern SubMenuItem menuGrindCapillaryStartGrind;

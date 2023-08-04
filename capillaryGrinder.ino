@@ -19,7 +19,10 @@ bool internalMotorCapillaryStepState = LOW;
 uint8_t motorZTaskId;
 bool internalMotorZStepState = LOW;
 unsigned long internalMotorZStepCount = 0;
-unsigned long internalMotorZStepMax;
+unsigned long internalMotorZStepGoal;
+
+// Declare Default Values
+void CALLBACK_FUNCTION CalibrateZero(int id = -1);
 
 void setup() {
     Serial.begin(9600);
@@ -59,8 +62,8 @@ void moveMotorZ(long distance, int speed) {  // speed in um/sec
 }
 
   void internalMotorZStepInc() {  // function for TaskManagerIO to tell motor to take step
-    if (internalMotorZStepCount <= internalMotorZStepMax) {
-        stopMotorZ()
+    if (internalMotorZStepCount <= internalMotorZStepGoal) {
+        stopMotorZ();
     }
 
     internalDigitalDevice().digitalWriteS(motorCapillaryStepPin, internalMotorZStepState);
@@ -72,8 +75,8 @@ void moveMotorZ(long distance, int speed) {  // speed in um/sec
   }
 
   void internalMotorZStepDec() {  // function for TaskManagerIO to tell motor to take step
-    if (internalMotorZStepCount <= internalMotorZStepMax) {
-        stopMotorZ()
+    if (internalMotorZStepCount <= internalMotorZStepGoal) {
+        stopMotorZ();
     }
 
     internalDigitalDevice().digitalWriteS(motorCapillaryStepPin, internalMotorZStepState);
@@ -91,7 +94,7 @@ void stopMotorZ() {
 void startMotorCapillary(int speed) {  //speed in rpm
     int delayTime = 1/(2*motorCapillaryStepsPerRev*speed);  // most definitely incorrect
   
-    taskIdMotorCapillary = taskManager.schedule(repeatMillis(delayTime), internalMotorCapillaryStep);
+    motorCapillaryTaskId = taskManager.schedule(repeatMillis(delayTime), internalMotorCapillaryStep);
 }
 
   void internalMotorCapillaryStep() {  // function for TaskManagerIO to tell motor to take step
@@ -102,7 +105,7 @@ void startMotorCapillary(int speed) {  //speed in rpm
 
 
 void stopMotorCapillary() {
-    taskManager.cancelTask(taskIdMotorCapillary);
+    taskManager.cancelTask(motorCapillaryTaskId);
 }
 
 void CALLBACK_FUNCTION setZeroed(int id) {
@@ -110,8 +113,8 @@ void CALLBACK_FUNCTION setZeroed(int id) {
     //  Make start button visible/hide not zeroed selector for all categories
     // if selection is "zero" call CalibrateZero
     
-
-    if (id.getCurrentValue() == "zero") {  //this is wrong, but i dont know what id should be
+/*
+    if (menuGrindCapillaryStartGrindNotZeroed.getCurrentValue() == 0) {  //make work for all entries
         CalibrateZero();
     } else {
         //  Make start button visible/ hide not zeroed selector for all categories
@@ -124,8 +127,9 @@ void CALLBACK_FUNCTION setZeroed(int id) {
         FaceCapillaryStartGrindStart.setVisible(True);
         FaceChipParametricStartGrindStart.setVisible(True);
         FaceChipSetDistanceStartGrindStart.setVisible(True);
-    }
+    }*/
 }
+
 
 void CALLBACK_FUNCTION CalibrateZero(int id) {
     // Software travels down at 10 micron per second until sound signal digital output of “1” is received. 
