@@ -1,32 +1,37 @@
 #include "capillaryGrinder_menu.h"
 
 // Z-axis Stepper Motor Pins
-const int pinMotorZStep = 5;
-const int pinMotorZDirection = 6;
-const int pinMotorZEnable = 7;
-const int stepsPerMicronZ = 10;
+const int motorZStepPin = 5;
+const int motorZDirectionPin = 6;
+const int motorZEnablePin = 7;
+const int motorZstepsPerMicron = 10;
 
 // Capillary Stepper Motor Pins
-const int pinMotorCapillaryStep = 8;
-const int pinMotorCapillaryDirection = 9;
-const int pinMotorCapillaryEnable = 10;
-const int stepsPerRevCapillary = 200;
+const int motorCapillaryStepPin = 8;
+const int motorCapillaryDirectionPin = 9;
+const int motorCapillaryEnablePin = 10;
+const int motorCapillaryStepsPerRev = 200;
 
 // Global Variables
-uint8_t taskIdCapillary;
-int internalMotorCapillaryStepState = LOW;
+uint8_t motorCapillaryTaskId;
+bool internalMotorCapillaryStepState = LOW;
+
+uint8_t motorZTaskId;
+bool internalMotorZStepState = LOW;
+unsigned long internalMotorZStepCount = 0;
+unsigned long internalMotorZStepMax;
 
 void setup() {
     Serial.begin(9600);
     setupMenu();
     
-    internalDigitalDevice().pinMode(pinMotorZStep, OUTPUT);
-    internalDigitalDevice().pinMode(pinMotorZDirection, OUTPUT);
-    internalDigitalDevice().pinMode(pinMotorZEnable, OUTPUT);
+    internalDigitalDevice().pinMode(motorZStepPin, OUTPUT);
+    internalDigitalDevice().pinMode(motorZDirectionPin, OUTPUT);
+    internalDigitalDevice().pinMode(motorZEnablePin, OUTPUT);
     
-    internalDigitalDevice().pinMode(pinMotorCapillaryStep, OUTPUT);
-    internalDigitalDevice().pinMode(pinMotorCapillaryDirection, OUTPUT);
-    internalDigitalDevice().pinMode(pinMotorCapillaryEnable, OUTPUT);
+    internalDigitalDevice().pinMode(motorCapillaryStepPin, OUTPUT);
+    internalDigitalDevice().pinMode(motorCapillaryDirectionPin, OUTPUT);
+    internalDigitalDevice().pinMode(motorCapillaryEnablePin, OUTPUT);
 }
 
 void loop() {
@@ -34,48 +39,70 @@ void loop() {
 }
 
 
-void moveZAxis(long distance, int speed) {  // speed in um/sec
+void moveMotorZ(long distance, int speed) {  // speed in um/sec
     // Set Direction based on +/- distance
-    digitalWrite(pinMotorZDirection, distance > 0);
+    digitalWrite(motorZDirectionPin, distance > 0);
   
     // Calculate Steps based on distance
-    long steps = abs(distance) * stepsPerMicronZ;
-  
+    internalMotorZStepGoal = internalMotorZStepCount+(distance * motorZstepsPerMicron);
+
     // Calculate Delay Time based on speed
-    int delayTime = 1/(2000*stepsPerMicronZ*speed); // double check this
+    int delayTime = 1/(2000*motorZstepsPerMicron*speed); // double check this
 
-    // Move Number of Steps
-    for(int x = 0; x < steps; x++){
-      taskManager.schedule(onceMillis(delayTime), internalMotorZStepHigh);
-      taskManager.schedule(onceMillis(delayTime), internalMotorZStepLow);
+    if (distance >= 0) {
+        digitalWrite(motorZDirectionPin, HIGH);
+        motorZTaskId = taskManager.schedule(repeatMillis(delayTime), internalMotorZStepInc); 
+    } else if (distance < 0) {
+        digitalWrite(motorZDirectionPin, LOW);
+        motorZTaskId = taskManager.schedule(repeatMillis(delayTime), internalMotorZStepDec); 
+    }    
+}
+
+  void internalMotorZStepInc() {  // function for TaskManagerIO to tell motor to take step
+    if (internalMotorZStepCount <= internalMotorZStepMax) {
+        stopMotorZ()
     }
+
+    internalDigitalDevice().digitalWriteS(motorCapillaryStepPin, internalMotorZStepState);
+    if (internalMotorZStepState = LOW){
+        internalMotorZStepCount++;
+    }
+
+    internalMotorZStepState = !internalMotorZStepState;
+  }
+
+  void internalMotorZStepDec() {  // function for TaskManagerIO to tell motor to take step
+    if (internalMotorZStepCount <= internalMotorZStepMax) {
+        stopMotorZ()
+    }
+
+    internalDigitalDevice().digitalWriteS(motorCapillaryStepPin, internalMotorZStepState);
+    if (internalMotorZStepState = LOW){
+        internalMotorZStepCount--;
+    }
+
+    internalMotorZStepState = !internalMotorZStepState;
+  }
+
+void stopMotorZ() {
+    taskManager.cancelTask(motorZTaskId);
 }
 
-  void internalMotorZStepHigh() {  // function for TaskManagerIO to tell motor to take step
-    internalDigitalDevice().digitalWrite(pinMotorZStep,HIGH);
-  }
-
-
-  void internalMotorZStepLow() {  // function for TaskManagerIO to tell motor to take step
-    internalDigitalDevice().digitalWrite(pinMotorZStep,LOW);
-  }
-
-
-void startCapillary(int speed) {  //speed in rpm
-    int delayTime = 1/(2*stepsPerRevCapillary*speed);  // most definitely incorrect
+void startMotorCapillary(int speed) {  //speed in rpm
+    int delayTime = 1/(2*motorCapillaryStepsPerRev*speed);  // most definitely incorrect
   
-    taskIdCapillary = taskManager.schedule(repeatMillis(delayTime), internalCapillaryStep);
+    taskIdMotorCapillary = taskManager.schedule(repeatMillis(delayTime), internalMotorCapillaryStep);
 }
 
-  void internalCapillaryStep() {  // function for TaskManagerIO to tell motor to take step
-    internalDigitalDevice().digitalWriteS(pinMotorCapillaryStep, internalMotorCapillaryStepState);
+  void internalMotorCapillaryStep() {  // function for TaskManagerIO to tell motor to take step
+    internalDigitalDevice().digitalWriteS(motorCapillaryStepPin, internalMotorCapillaryStepState);
 
     internalMotorCapillaryStepState = !internalMotorCapillaryStepState; 
   }
 
 
-void stopCapillary() {
-    taskManager.cancelTask(taskIdCapillary);
+void stopMotorCapillary() {
+    taskManager.cancelTask(taskIdMotorCapillary);
 }
 
 void CALLBACK_FUNCTION setZeroed(int id) {
@@ -85,9 +112,18 @@ void CALLBACK_FUNCTION setZeroed(int id) {
     
 
     if (id.getCurrentValue() == "zero") {  //this is wrong, but i dont know what id should be
-        // call CalibrateZero
+        CalibrateZero();
     } else {
-        //  Make start button visible/hide not zeroed selector for all categories
+        //  Make start button visible/ hide not zeroed selector for all categories
+        GrindCapillaryStartGrindNotZeroed.setVisible(False);
+        FaceCapillaryStartGrindNotZeroed.setVisible(False);
+        FaceChipParametricStartGrindNotZeroed.setVisible(False);
+        FaceChipSetDistanceStartGrindNotZeroed.setVisible(False);
+
+        GrindCapillaryStartGrindStart.setVisible(True);
+        FaceCapillaryStartGrindStart.setVisible(True);
+        FaceChipParametricStartGrindStart.setVisible(True);
+        FaceChipSetDistanceStartGrindStart.setVisible(True);
     }
 }
 
