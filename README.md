@@ -1,3 +1,5 @@
+Supports conection over serial with EmbedCONTROL
+
 ## Dependencies:
 
 TcMenu by The Coders Corner
