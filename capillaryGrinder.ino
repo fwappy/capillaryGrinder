@@ -142,7 +142,7 @@ void CALLBACK_FUNCTION setZeroed(int id) {
 }
 
 
-void CALLBACK_FUNCTION CalibrateZero(int id) {
+void CALLBACK_FUNCTION calibrateZero(int id) {
     // Software travels down at 10 micron per second until sound signal digital output of “1” is received. 
 
     moveMotorZ(-1000, 10, 1)
