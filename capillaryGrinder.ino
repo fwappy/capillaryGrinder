@@ -48,27 +48,28 @@ int MotorZPosition(){
   return (internalMotorZStepCount / motorZstepsPerMicron);
 }
 
-void moveMotorZ(int position, int speed) {  // speed in um/sec
-    // Set Direction based on +/- distance
-    digitalWrite(motorZDirectionPin, position > 0);
-  
+  void moveMotorZ(int position, int speed) {  // speed in um/sec
+
     // Calculate Steps based on position
     internalMotorZStepGoal = (position * motorZstepsPerMicron);
 
     // Calculate Delay Time based on speed
     int delayTime = 1/(2000*motorZstepsPerMicron*speed); // double check this
 
-    if (position >= 0) {
+    // Set Direction
+    if (internalMotorZStepGoal > internalMotorZStepCount) {
+
         digitalWrite(motorZDirectionPin, HIGH);
         motorZTaskId = taskManager.schedule(repeatMillis(delayTime), internalMotorZStepInc); 
-    } else if (position < 0) {
+    } else if (internalMotorZStepGoal < internalMotorZStepCount) {
+
         digitalWrite(motorZDirectionPin, LOW);
         motorZTaskId = taskManager.schedule(repeatMillis(delayTime), internalMotorZStepDec); 
     }    
 }
 
   void internalMotorZStepInc() {  // function for TaskManagerIO to tell motor to take step
-    if (internalMotorZStepCount <= internalMotorZStepGoal) {
+    if (internalMotorZStepCount >= internalMotorZStepGoal) {
         stopMotorZ();
     }
 
