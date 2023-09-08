@@ -144,9 +144,21 @@ void CALLBACK_FUNCTION setZeroed(int id) {
 
 void CALLBACK_FUNCTION CalibrateZero(int id) {
     // Software travels down at 10 micron per second until sound signal digital output of “1” is received. 
+
+    moveMotorZ(-1000, 10, 1)
+
+    //check if sound signal is received every ??? milliseconds, cancel motor move and move on to next step (if motor stops, give error message)
+
+
     // Moves up 10 microns
+    moveMotorZ(10, 50, 1)
+
     // Lowers at 1 micron a second until sound signal “1” is sent. (maximum 15 micron travel)
-    // reset currentOffset
+    moveMotorZ(15, 1, 1)
+
+    // reset current position
+    internalMotorZStepCount = 0;
+
     // call moveOffset()
     // Call setZeroed()
 }
