@@ -53,9 +53,10 @@ void moveMotorZ(int position, int speed, bool relative = 0) {  // speed in um/se
     // Calculate Steps based on position
     if (relative) {
         internalMotorZStepGoal = (position * motorZstepsPerMicron) + internalMotorZStepCount;
-    } else
+    } else {
     internalMotorZStepGoal = (position * motorZstepsPerMicron);
-
+    }
+    
     // Calculate Delay Time based on speed
     int delayTime = 1/(2000*motorZstepsPerMicron*speed); // double check this
 
