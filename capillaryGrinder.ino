@@ -139,7 +139,10 @@ void CALLBACK_FUNCTION calibrateZero(int id = 0) {
 
 int getMenuItemValue(int id) {
   MenuItem* item = getMenuItemById(id);
-  return item->getCurrentValue();
+  if (item->getMenuType() == MENUTYPE_ENUM_VALUE){
+    ValueMenuItem* valueItem = dynamic_cast<ValueMenuItem*>(item);
+  }
+  return valueItem->getCurrentValue();
 }
 
 void CALLBACK_FUNCTION setZeroed(int id = 0) {
