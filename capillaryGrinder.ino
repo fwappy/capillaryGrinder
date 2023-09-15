@@ -116,11 +116,6 @@ void stopMotorCapillary() {
     taskManager.cancelTask(motorCapillaryTaskId);
 }
 
-int getMenuItemValue(int id) {
-  MenuItem* item = getMenuItemById(id);
-  
-}
-
 void CALLBACK_FUNCTION calibrateZero(int id = 0) {
     // Software travels down at 10 micron per second until sound signal digital output of “1” is received. 
 
@@ -142,27 +137,23 @@ void CALLBACK_FUNCTION calibrateZero(int id = 0) {
     // Call setZeroed()
 }
 
+int getMenuItemValue(int id) {
+  MenuItem* item = getMenuItemById(id);
+  return item->getCurrentValue();
+}
+
 void CALLBACK_FUNCTION setZeroed(int id = 0) {
     // get value of selected menu item
     int val;
     switch (id) {
+        case -1:
+            val = 0;
+            break;
         case 0:
             val = 1;
-        case 13:
-            val = menuGrindCapillaryStartGrindNotZeroed.getCurrentValue();
-            break;
-        case 18:
-            val = menuFaceCapillaryStartGrindNotZeroed.getCurrentValue();
-            break;
-        case 28:
-            val = menuFaceChipParametricStartGrindNotZeroed.getCurrentValue();
-            break;
-        case 32:
-            val = menuFaceChipSetDistanceStartGrindNotZeroed.getCurrentValue();
             break;
         default:
-            Serial.write("Error: Must include menu entry in setZeroed()");
-            break;
+            val = getMenuItemValue(id);
     }  
     serlogF3(SER_USER_1, "id, value = ", id, val);
 
