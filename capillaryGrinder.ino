@@ -16,6 +16,8 @@ const int motorCapillaryEnablePin = 10;
 const int motorCapillaryStepsPerRev = 200;
 
 // Global Variables
+int internalCalibrateOffsetOldValue;
+
 uint8_t motorCapillaryTaskId;
 bool internalMotorCapillaryStepState = LOW;
 
@@ -35,6 +37,8 @@ void setup() {
     internalDigitalDevice().pinMode(motorCapillaryStepPin, OUTPUT);
     internalDigitalDevice().pinMode(motorCapillaryDirectionPin, OUTPUT);
     internalDigitalDevice().pinMode(motorCapillaryEnablePin, OUTPUT);
+
+    internalCalibrateOffsetOldValue = menuCalibrateOffset.getCurrentValue();
 }
 
 void loop() {
@@ -122,6 +126,9 @@ int getMenuItemValue(int id) {
 }
 
 void CALLBACK_FUNCTION calibrateZero(int id = 0) {
+    // display "Calibrating" message
+    // cancel if button is pressed again
+
     // Software travels down at 10 micron per second until sound signal digital output of “1” is received. 
 
     moveMotorZ(-1000, 10, 1);
@@ -135,19 +142,28 @@ void CALLBACK_FUNCTION calibrateZero(int id = 0) {
     // Lowers at 1 micron a second until sound signal “1” is sent. (maximum 15 micron travel)
     moveMotorZ(15, 1, 1);
 
-    // reset current position
-    internalMotorZStepCount = 0;
+    // set zero position
+    internalMotorZStepCount = 0 + (menuCalibrateOffset.getCurrentValue() * motorZstepsPerMicron);
+    
+    // clear Not Zeroed entries
+    setZeroed();
+    
+    // clear "Calibrating" message
 
-    // call moveOffset()
-    // Call setZeroed()
+    // Move to Zero position
+    moveMotorZ(0, 50, 0);
 }
 
 void CALLBACK_FUNCTION setZeroed(int id = 0) {
     // get value of selected menu item
     int val;
     switch (id) {
+        case -1:
+            val = 0;
+            break;
         case 0:
             val = 1;
+            break;*
         case 13:
             val = menuGrindCapillaryStartGrindNotZeroed.getCurrentValue();
             break;
@@ -185,7 +201,9 @@ void CALLBACK_FUNCTION setZeroed(int id = 0) {
     }
 
 void CALLBACK_FUNCTION moveOffset(int id = 0) {
-//    moveMotorZ(CalibrateOffset.getCurrentValue(), 10);
+    internalMotorZStepCount = internalMotorZStepCount + ((menuCalibrateOffset.getCurrentValue()- internalCalibrateOffsetOldValue) * motorZstepsPerMicron);
+    internalCalibrateOffsetOldValue = menuCalibrateOffset.getCurrentValue();
+    moveMotorZ(0, 50, 0);
 }
 
 
