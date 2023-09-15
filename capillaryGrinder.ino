@@ -119,15 +119,34 @@ void stopMotorCapillary() {
     taskManager.cancelTask(motorCapillaryTaskId);
 }
 
-void CALLBACK_FUNCTION setZeroed(int id) {
-    // if selection is "ignore" or (id = NULL)
-    //  Make start button visible/hide not zeroed selector for all categories
-    // if selection is "zero" call CalibrateZero
-    
-/*
-    if (menuGrindCapillaryStartGrindNotZeroed.getCurrentValue() == 0) {  //make work for all entries
+void CALLBACK_FUNCTION setZeroed(int id = 0) {
+    // get value of selected menu item
+    int val;
+    switch (id) {
+        case 0:
+            val = 1;
+        case 13:
+            val = GrindCapillaryStartGrindNotZeroed.getCurrentValue();
+            break;
+        case 18:
+            val = FaceCapillaryStartGrindNotZeroed.getCurrentValue();
+            break;
+        case 28:
+            val = FaceChipParametricStartGrindNotZeroed.getCurrentValue();
+            break;
+        case 32:
+            val = FaceChipSetDistanceStartGrindNotZeroed.getCurrentValue();
+            break;
+        default:
+            serial.write("Error: Must include menu entry in SetZeroed()");
+            break;
+    }  
+    serial.write(val); // debugging
+
+    // 0 = zero, 1 = ignore
+    if val == 0
         CalibrateZero();
-    } else {
+    else
         //  Make start button visible/ hide not zeroed selector for all categories
         GrindCapillaryStartGrindNotZeroed.setVisible(False);
         FaceCapillaryStartGrindNotZeroed.setVisible(False);
@@ -138,9 +157,7 @@ void CALLBACK_FUNCTION setZeroed(int id) {
         FaceCapillaryStartGrindStart.setVisible(True);
         FaceChipParametricStartGrindStart.setVisible(True);
         FaceChipSetDistanceStartGrindStart.setVisible(True);
-    }*/
-}
-
+    }
 
 void CALLBACK_FUNCTION calibrateZero(int id) {
     // Software travels down at 10 micron per second until sound signal digital output of “1” is received. 
