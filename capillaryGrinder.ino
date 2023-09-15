@@ -138,11 +138,40 @@ void CALLBACK_FUNCTION calibrateZero(int id = 0) {
 }
 
 int getMenuItemValue(int id) {
-  MenuItem* item = getMenuItemById(id);
-  if (item->getMenuType() == MENUTYPE_ENUM_VALUE){
-    ValueMenuItem* valueItem = dynamic_cast<ValueMenuItem*>(item);
-  }
-  return valueItem->getCurrentValue();
+MenuItem* item = getMenuItemById(id);
+
+if (item != nullptr) {
+    MenuType itemType = item->getMenuType();
+
+    switch (itemType) {
+        case MenuType::AnalogMenuItem: {
+            AnalogMenuItem* analogItem = dynamic_cast<AnalogMenuItem*>(item);
+            if (analogItem != nullptr) {
+                // Handle AnalogMenuItem-specific operations
+                int value = analogItem->getCurrentValue();
+                // Your code here
+            }
+            break;
+        }
+
+        case MenuType::EnumMenuItem: {
+            EnumMenuItem* enumItem = dynamic_cast<EnumMenuItem*>(item);
+            if (enumItem != nullptr) {
+                // Handle TextMenuItem-specific operations
+                const char* text = textItem->getText();
+                // Your code here
+            }
+            break;
+        }
+
+        // Add more cases for other MenuTypes as needed
+
+        default:
+            // Handle unsupported menu item types or log an error
+            break;
+    }
+}
+
 }
 
 void CALLBACK_FUNCTION setZeroed(int id = 0) {
