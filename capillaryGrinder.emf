@@ -45,7 +45,7 @@
         "variableName": "CalibrateZero",
         "id": 6,
         "eepromAddress": -1,
-        "functionName": "CalibrateZero",
+        "functionName": "calibrateZero",
         "readOnly": false,
         "localOnly": false,
         "visible": true,

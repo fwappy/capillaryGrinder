@@ -24,9 +24,6 @@ bool internalMotorZStepState = LOW;
 long internalMotorZStepCount = 0;
 long internalMotorZStepGoal;
 
-// Declare Default Values
-void CalibrateZero(int id = -1);
-
 void setup() {
     Serial.begin(9600);
     setupMenu();
@@ -119,49 +116,12 @@ void stopMotorCapillary() {
     taskManager.cancelTask(motorCapillaryTaskId);
 }
 
-void CALLBACK_FUNCTION setZeroed(int id = 0) {
-    // get value of selected menu item
-    int val;
-    switch (id) {
-        case 0:
-            val = 1;
-        case 13:
-            val = menuGrindCapillaryStartGrindNotZeroed.getCurrentValue();
-            break;
-        case 18:
-            val = menuFaceCapillaryStartGrindNotZeroed.getCurrentValue();
-            break;
-        case 28:
-            val = menuFaceChipParametricStartGrindNotZeroed.getCurrentValue();
-            break;
-        case 32:
-            val = menuFaceChipSetDistanceStartGrindNotZeroed.getCurrentValue();
-            break;
-        default:
-            Serial.write("Error: Must include menu entry in SetZeroed()");
-            break;
-    }  
-    Serial.write(val); // debugging
+int getMenuItemValue(int id) {
+  MenuItem* item = getMenuItemById(id);
+  
+}
 
-    // 0 = zero, 1 = ignore
-    if (val == 0){
-        CalibrateZero();
-    }
-    else {
-        //  Make start button visible/ hide not zeroed selector for all categories
-        menuGrindCapillaryStartGrindNotZeroed.setVisible(false);
-        menuFaceCapillaryStartGrindNotZeroed.setVisible(false);
-        menuFaceChipParametricStartGrindNotZeroed.setVisible(false);
-        menuFaceChipSetDistanceStartGrindNotZeroed.setVisible(false);
-
-        menuGrindCapillaryStartGrindStart.setVisible(true);
-        menuFaceCapillaryStartGrindStart.setVisible(true);
-        menuFaceChipParametricStartGrindStart.setVisible(true);
-        menuFaceChipSetDistanceStartGrindStart.setVisible(true);
-    }
-    }
-
-void CALLBACK_FUNCTION calibrateZero(int id) {
+void CALLBACK_FUNCTION calibrateZero(int id = 0) {
     // Software travels down at 10 micron per second until sound signal digital output of “1” is received. 
 
     moveMotorZ(-1000, 10, 1);
@@ -182,8 +142,49 @@ void CALLBACK_FUNCTION calibrateZero(int id) {
     // Call setZeroed()
 }
 
+void CALLBACK_FUNCTION setZeroed(int id = 0) {
+    // get value of selected menu item
+    int val;
+    switch (id) {
+        case 0:
+            val = 1;
+        case 13:
+            val = menuGrindCapillaryStartGrindNotZeroed.getCurrentValue();
+            break;
+        case 18:
+            val = menuFaceCapillaryStartGrindNotZeroed.getCurrentValue();
+            break;
+        case 28:
+            val = menuFaceChipParametricStartGrindNotZeroed.getCurrentValue();
+            break;
+        case 32:
+            val = menuFaceChipSetDistanceStartGrindNotZeroed.getCurrentValue();
+            break;
+        default:
+            Serial.write("Error: Must include menu entry in setZeroed()");
+            break;
+    }  
+    serlogF3(SER_USER_1, "id, value = ", id, val);
 
-void CALLBACK_FUNCTION moveOffset(int id) {
+    // 0 = zero, 1 = ignore
+    if (val == 0){
+        calibrateZero();
+    }
+    else {
+        //  Make start button visible/ hide not zeroed selector for all categories
+        menuGrindCapillaryStartGrindNotZeroed.setVisible(false);
+        menuFaceCapillaryStartGrindNotZeroed.setVisible(false);
+        menuFaceChipParametricStartGrindNotZeroed.setVisible(false);
+        menuFaceChipSetDistanceStartGrindNotZeroed.setVisible(false);
+
+        menuGrindCapillaryStartGrindStart.setVisible(true);
+        menuFaceCapillaryStartGrindStart.setVisible(true);
+        menuFaceChipParametricStartGrindStart.setVisible(true);
+        menuFaceChipSetDistanceStartGrindStart.setVisible(true);
+    }
+    }
+
+void CALLBACK_FUNCTION moveOffset(int id = 0) {
 //    moveMotorZ(CalibrateOffset.getCurrentValue(), 10);
 }
 

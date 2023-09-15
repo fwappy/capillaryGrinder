@@ -113,7 +113,7 @@ AnalogMenuItem menuGrindCapillaryInnerDiameter(&minfoGrindCapillaryInnerDiameter
 const SubMenuInfo minfoGrindCapillary = { "GrindCapillary", 2, 0xffff, 0, NO_CALLBACK };
 BackMenuItem menuBackGrindCapillary(&minfoGrindCapillary, &menuGrindCapillaryInnerDiameter, INFO_LOCATION_PGM);
 SubMenuItem menuGrindCapillary(&minfoGrindCapillary, &menuBackGrindCapillary, &menuFaceCapillary, INFO_LOCATION_PGM);
-const AnyMenuInfo minfoCalibrateZero = { "Zero", 6, 0xffff, 0, CalibrateZero };
+const AnyMenuInfo minfoCalibrateZero = { "Zero", 6, 0xffff, 0, calibrateZero };
 ActionMenuItem menuCalibrateZero(&minfoCalibrateZero, nullptr, INFO_LOCATION_PGM);
 const AnyMenuInfo minfoCalibrateOffset = { "Offset", 5, 4, 0, moveOffset };
 EditableLargeNumberMenuItem menuCalibrateOffset(&minfoCalibrateOffset, LargeFixedNumber(4, 0, 0U, 0U, false), true, &menuCalibrateZero, INFO_LOCATION_PGM);

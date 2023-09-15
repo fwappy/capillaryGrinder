@@ -85,7 +85,7 @@ void setupMenu();
 // Callback functions must always include CALLBACK_FUNCTION after the return type
 #define CALLBACK_FUNCTION
 
-void CALLBACK_FUNCTION CalibrateZero(int id);
+void CALLBACK_FUNCTION calibrateZero(int id);
 void CALLBACK_FUNCTION moveOffset(int id);
 void CALLBACK_FUNCTION setZeroed(int id);
 void CALLBACK_FUNCTION startFaceCapillary(int id);
