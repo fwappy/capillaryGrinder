@@ -126,52 +126,54 @@ void CALLBACK_FUNCTION setZeroed(int id = 0) {
         case 0:
             val = 1;
         case 13:
-            val = GrindCapillaryStartGrindNotZeroed.getCurrentValue();
+            val = menuGrindCapillaryStartGrindNotZeroed.getCurrentValue();
             break;
         case 18:
-            val = FaceCapillaryStartGrindNotZeroed.getCurrentValue();
+            val = menuFaceCapillaryStartGrindNotZeroed.getCurrentValue();
             break;
         case 28:
-            val = FaceChipParametricStartGrindNotZeroed.getCurrentValue();
+            val = menuFaceChipParametricStartGrindNotZeroed.getCurrentValue();
             break;
         case 32:
-            val = FaceChipSetDistanceStartGrindNotZeroed.getCurrentValue();
+            val = menuFaceChipSetDistanceStartGrindNotZeroed.getCurrentValue();
             break;
         default:
-            serial.write("Error: Must include menu entry in SetZeroed()");
+            Serial.write("Error: Must include menu entry in SetZeroed()");
             break;
     }  
-    serial.write(val); // debugging
+    Serial.write(val); // debugging
 
     // 0 = zero, 1 = ignore
-    if val == 0
+    if (val == 0){
         CalibrateZero();
-    else
+    }
+    else {
         //  Make start button visible/ hide not zeroed selector for all categories
-        GrindCapillaryStartGrindNotZeroed.setVisible(False);
-        FaceCapillaryStartGrindNotZeroed.setVisible(False);
-        FaceChipParametricStartGrindNotZeroed.setVisible(False);
-        FaceChipSetDistanceStartGrindNotZeroed.setVisible(False);
+        menuGrindCapillaryStartGrindNotZeroed.setVisible(false);
+        menuFaceCapillaryStartGrindNotZeroed.setVisible(false);
+        menuFaceChipParametricStartGrindNotZeroed.setVisible(false);
+        menuFaceChipSetDistanceStartGrindNotZeroed.setVisible(false);
 
-        GrindCapillaryStartGrindStart.setVisible(True);
-        FaceCapillaryStartGrindStart.setVisible(True);
-        FaceChipParametricStartGrindStart.setVisible(True);
-        FaceChipSetDistanceStartGrindStart.setVisible(True);
+        menuGrindCapillaryStartGrindStart.setVisible(true);
+        menuFaceCapillaryStartGrindStart.setVisible(true);
+        menuFaceChipParametricStartGrindStart.setVisible(true);
+        menuFaceChipSetDistanceStartGrindStart.setVisible(true);
+    }
     }
 
 void CALLBACK_FUNCTION calibrateZero(int id) {
     // Software travels down at 10 micron per second until sound signal digital output of “1” is received. 
 
-    moveMotorZ(-1000, 10, 1)
+    moveMotorZ(-1000, 10, 1);
 
     //check if sound signal is received every ??? milliseconds, cancel motor move and move on to next step (if motor stops, give error message)
 
 
     // Moves up 10 microns
-    moveMotorZ(10, 50, 1)
+    moveMotorZ(10, 50, 1);
 
     // Lowers at 1 micron a second until sound signal “1” is sent. (maximum 15 micron travel)
-    moveMotorZ(15, 1, 1)
+    moveMotorZ(15, 1, 1);
 
     // reset current position
     internalMotorZStepCount = 0;
