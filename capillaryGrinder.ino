@@ -132,7 +132,8 @@ int getMenuItemValue(int id) {
 
 void CALLBACK_FUNCTION calibrateZero(int id = 0) {
   // display "Calibrating" message
-  // cancel if button is pressed again
+  menuState = 2;
+  renderer.takeOverDisplay(myDisplayCallback);
 
   // Software travels down at 10 micron per second until sound signal digital output of “1” is received.
 
@@ -154,21 +155,16 @@ void CALLBACK_FUNCTION calibrateZero(int id = 0) {
   setZeroed();
 
   // clear "Calibrating" message
+  menuState = 0;
 
   // Move to Zero position
   moveMotorZ(0, 50, 0);
 }
 
-void CALLBACK_FUNCTION setZeroed(int id = 0) {
+void CALLBACK_FUNCTION notZeroed(int id = 0) {
   // get value of selected menu item
   int val;
   switch (id) {
-    case -1:
-      val = 0;
-      break;
-    case 0:
-      val = 1;
-      break; *
     case 13:
       val = menuGrindCapillaryStartGrindNotZeroed.getCurrentValue();
       break;
@@ -193,6 +189,11 @@ void CALLBACK_FUNCTION setZeroed(int id = 0) {
     calibrateZero();
   }
   else {
+    setZeroed();
+  }
+}
+
+void setZeroed() {
     //  Make start button visible/ hide not zeroed selector for all categories
     menuGrindCapillaryStartGrindNotZeroed.setVisible(false);
     menuFaceCapillaryStartGrindNotZeroed.setVisible(false);
@@ -203,7 +204,6 @@ void CALLBACK_FUNCTION setZeroed(int id = 0) {
     menuFaceCapillaryStartGrindStart.setVisible(true);
     menuFaceChipParametricStartGrindStart.setVisible(true);
     menuFaceChipSetDistanceStartGrindStart.setVisible(true);
-  }
 }
 
 void CALLBACK_FUNCTION moveOffset(int id = 0) {
@@ -214,6 +214,8 @@ void CALLBACK_FUNCTION moveOffset(int id = 0) {
 
 
 void CALLBACK_FUNCTION startGrindCapillary(int id) {
+  menuState = 1;
+  renderer.takeOverDisplay(myDisplayCallback);
   menuMgr.save();
 
   int grindDelayTime = 20;
@@ -257,6 +259,8 @@ void CALLBACK_FUNCTION startGrindCapillary(int id) {
 
 
 void CALLBACK_FUNCTION startFaceCapillary(int id) {
+  menuState = 1;
+  renderer.takeOverDisplay(myDisplayCallback);
   menuMgr.save();
 
   if (menuFaceCapillaryCapillaryMotor.getCurrentValue() == true) {
@@ -298,6 +302,8 @@ void CALLBACK_FUNCTION startFaceCapillary(int id) {
 
 
 void CALLBACK_FUNCTION startFaceChipParametric(int id) {
+  menuState = 1;
+  renderer.takeOverDisplay(myDisplayCallback);
   menuMgr.save();
   // TODO
     /*
@@ -334,6 +340,8 @@ void CALLBACK_FUNCTION startFaceChipParametric(int id) {
 
 
 void CALLBACK_FUNCTION startFaceChipDistance(int id) {
+  menuState = 1;
+  renderer.takeOverDisplay(myDisplayCallback);
   menuMgr.save();
   // TODO
 }
