@@ -18,6 +18,7 @@ const int motorCapillaryStepsPerRev = 200;
 // Global Variables
 int internalCalibrateOffsetOldValue;
 int motorZTravelSpeed = 15;
+const int displayResetTime = 300;
 
 uint8_t motorCapillaryTaskId;
 bool internalMotorCapillaryStepState = LOW;
@@ -28,217 +29,253 @@ long internalMotorZStepCount = 0;
 long internalMotorZStepGoal;
 
 void setup() {
-    Serial.begin(9600);
-    setupMenu();
-    
-    internalDigitalDevice().pinMode(motorZStepPin, OUTPUT);
-    internalDigitalDevice().pinMode(motorZDirectionPin, OUTPUT);
-    internalDigitalDevice().pinMode(motorZEnablePin, OUTPUT);
-    
-    internalDigitalDevice().pinMode(motorCapillaryStepPin, OUTPUT);
-    internalDigitalDevice().pinMode(motorCapillaryDirectionPin, OUTPUT);
-    internalDigitalDevice().pinMode(motorCapillaryEnablePin, OUTPUT);
+  Serial.begin(9600);
+  setupMenu();
 
-    internalCalibrateOffsetOldValue = menuCalibrateOffset.getCurrentValue();
+  internalDigitalDevice().pinMode(motorZStepPin, OUTPUT);
+  internalDigitalDevice().pinMode(motorZDirectionPin, OUTPUT);
+  internalDigitalDevice().pinMode(motorZEnablePin, OUTPUT);
+
+  internalDigitalDevice().pinMode(motorCapillaryStepPin, OUTPUT);
+  internalDigitalDevice().pinMode(motorCapillaryDirectionPin, OUTPUT);
+  internalDigitalDevice().pinMode(motorCapillaryEnablePin, OUTPUT);
+
+  internalCalibrateOffsetOldValue = menuCalibrateOffset.getCurrentValue();
+
+  renderer.setResetIntervalTimeSeconds(displayResetTime);
 }
 
 void loop() {
-    taskManager.runLoop();
+  taskManager.runLoop();
 }
 
-int MotorZPosition(){
+int MotorZPosition() {
   return (internalMotorZStepCount / motorZstepsPerMicron);
 }
 
 void moveMotorZ(int position, int speed = motorZTravelSpeed, bool relative = 0) {  // speed in um/sec
 
-    // Calculate Steps based on position
-    if (relative) {
-        internalMotorZStepGoal = (position * motorZstepsPerMicron) + internalMotorZStepCount;
-    } else {
-        internalMotorZStepGoal = (position * motorZstepsPerMicron);
-    }
+  // Calculate Steps based on position
+  if (relative) {
+    internalMotorZStepGoal = (position * motorZstepsPerMicron) + internalMotorZStepCount;
+  } else {
+    internalMotorZStepGoal = (position * motorZstepsPerMicron);
+  }
 
-    // Calculate Delay Time based on speed
-    int delayTime = 1/(2000*motorZstepsPerMicron*speed); // double check this
+  // Calculate Delay Time based on speed
+  int delayTime = 1 / (2000 * motorZstepsPerMicron * speed); // double check this
 
-    // Set Direction
-    if (internalMotorZStepGoal > internalMotorZStepCount) {
+  // Set Direction
+  if (internalMotorZStepGoal > internalMotorZStepCount) {
 
-        digitalWrite(motorZDirectionPin, HIGH);
-        motorZTaskId = taskManager.schedule(repeatMillis(delayTime), internalMotorZStepInc); 
-    } else if (internalMotorZStepGoal < internalMotorZStepCount) {
+    digitalWrite(motorZDirectionPin, HIGH);
+    motorZTaskId = taskManager.schedule(repeatMillis(delayTime), internalMotorZStepInc);
+  } else if (internalMotorZStepGoal < internalMotorZStepCount) {
 
-        digitalWrite(motorZDirectionPin, LOW);
-        motorZTaskId = taskManager.schedule(repeatMillis(delayTime), internalMotorZStepDec); 
-    }    
+    digitalWrite(motorZDirectionPin, LOW);
+    motorZTaskId = taskManager.schedule(repeatMillis(delayTime), internalMotorZStepDec);
+  }
 }
 
-  void internalMotorZStepInc() {  // function for TaskManagerIO to tell motor to take step
-    if (internalMotorZStepCount >= internalMotorZStepGoal) {
-        stopMotorZ();
-    }
-
-    internalDigitalDevice().digitalWriteS(motorCapillaryStepPin, internalMotorZStepState);
-    if (internalMotorZStepState = LOW){
-        internalMotorZStepCount++;
-    }
-
-    internalMotorZStepState = !internalMotorZStepState;
+void internalMotorZStepInc() {  // function for TaskManagerIO to tell motor to take step
+  if (internalMotorZStepCount >= internalMotorZStepGoal) {
+    stopMotorZ();
   }
 
-  void internalMotorZStepDec() {  // function for TaskManagerIO to tell motor to take step
-    if (internalMotorZStepCount <= internalMotorZStepGoal) {
-        stopMotorZ();
-    }
-
-    internalDigitalDevice().digitalWriteS(motorCapillaryStepPin, internalMotorZStepState);
-    if (internalMotorZStepState = LOW){
-        internalMotorZStepCount--;
-    }
-
-    internalMotorZStepState = !internalMotorZStepState;
+  internalDigitalDevice().digitalWriteS(motorCapillaryStepPin, internalMotorZStepState);
+  if (internalMotorZStepState = LOW) {
+    internalMotorZStepCount++;
   }
+
+  internalMotorZStepState = !internalMotorZStepState;
+}
+
+void internalMotorZStepDec() {  // function for TaskManagerIO to tell motor to take step
+  if (internalMotorZStepCount <= internalMotorZStepGoal) {
+    stopMotorZ();
+  }
+
+  internalDigitalDevice().digitalWriteS(motorCapillaryStepPin, internalMotorZStepState);
+  if (internalMotorZStepState = LOW) {
+    internalMotorZStepCount--;
+  }
+
+  internalMotorZStepState = !internalMotorZStepState;
+}
 
 void stopMotorZ() {
-    taskManager.cancelTask(motorZTaskId);
+  taskManager.cancelTask(motorZTaskId);
 }
 
 void startMotorCapillary(int speed = 10) {  //speed in rpm
-    int delayTime = 1/(2*motorCapillaryStepsPerRev*speed);  // most definitely incorrect
-  
-    motorCapillaryTaskId = taskManager.schedule(repeatMillis(delayTime), internalMotorCapillaryStep);
+  int delayTime = 1 / (2 * motorCapillaryStepsPerRev * speed); // most definitely incorrect
+
+  motorCapillaryTaskId = taskManager.schedule(repeatMillis(delayTime), internalMotorCapillaryStep);
 }
 
-  void internalMotorCapillaryStep() {  // function for TaskManagerIO to tell motor to take step
-    internalDigitalDevice().digitalWriteS(motorCapillaryStepPin, internalMotorCapillaryStepState);
+void internalMotorCapillaryStep() {  // function for TaskManagerIO to tell motor to take step
+  internalDigitalDevice().digitalWriteS(motorCapillaryStepPin, internalMotorCapillaryStepState);
 
-    internalMotorCapillaryStepState = !internalMotorCapillaryStepState; 
-  }
+  internalMotorCapillaryStepState = !internalMotorCapillaryStepState;
+}
 
 
 void stopMotorCapillary() {
-    taskManager.cancelTask(motorCapillaryTaskId);
+  taskManager.cancelTask(motorCapillaryTaskId);
 }
 
 int getMenuItemValue(int id) {
   MenuItem* item = getMenuItemById(id);
-  
+
 }
 
 void CALLBACK_FUNCTION calibrateZero(int id = 0) {
-    // display "Calibrating" message
-    // cancel if button is pressed again
+  // display "Calibrating" message
+  // cancel if button is pressed again
 
-    // Software travels down at 10 micron per second until sound signal digital output of “1” is received. 
+  // Software travels down at 10 micron per second until sound signal digital output of “1” is received.
 
-    moveMotorZ(-1000, 10, 1);
+  moveMotorZ(-1000, 10, 1);
 
-    //check if sound signal is received every ??? milliseconds, cancel motor move and move on to next step (if motor stops, give error message)
+  //check if sound signal is received every ??? milliseconds, cancel motor move and move on to next step (if motor stops, give error message)
 
 
-    // Moves up 10 microns
-    moveMotorZ(10, 50, 1);
+  // Moves up 10 microns
+  moveMotorZ(10, 50, 1);
 
-    // Lowers at 1 micron a second until sound signal “1” is sent. (maximum 15 micron travel)
-    moveMotorZ(15, 1, 1);
+  // Lowers at 1 micron a second until sound signal “1” is sent. (maximum 15 micron travel)
+  moveMotorZ(15, 1, 1);
 
-    // set zero position
-    internalMotorZStepCount = 0 + (menuCalibrateOffset.getCurrentValue() * motorZstepsPerMicron);
-    
-    // clear Not Zeroed entries
-    setZeroed();
-    
-    // clear "Calibrating" message
+  // set zero position
+  internalMotorZStepCount = 0 + (menuCalibrateOffset.getCurrentValue() * motorZstepsPerMicron);
 
-    // Move to Zero position
-    moveMotorZ(0, 50, 0);
+  // clear Not Zeroed entries
+  setZeroed();
+
+  // clear "Calibrating" message
+
+  // Move to Zero position
+  moveMotorZ(0, 50, 0);
 }
 
 void CALLBACK_FUNCTION setZeroed(int id = 0) {
-    // get value of selected menu item
-    int val;
-    switch (id) {
-        case -1:
-            val = 0;
-            break;
-        case 0:
-            val = 1;
-            break;*
-        case 13:
-            val = menuGrindCapillaryStartGrindNotZeroed.getCurrentValue();
-            break;
-        case 18:
-            val = menuFaceCapillaryStartGrindNotZeroed.getCurrentValue();
-            break;
-        case 28:
-            val = menuFaceChipParametricStartGrindNotZeroed.getCurrentValue();
-            break;
-        case 32:
-            val = menuFaceChipSetDistanceStartGrindNotZeroed.getCurrentValue();
-            break;
-        default:
-            Serial.write("Error: Must include menu entry in setZeroed()");
-            break;
-    }  
-    serlogF3(SER_USER_1, "id, value = ", id, val);
+  // get value of selected menu item
+  int val;
+  switch (id) {
+    case -1:
+      val = 0;
+      break;
+    case 0:
+      val = 1;
+      break; *
+    case 13:
+      val = menuGrindCapillaryStartGrindNotZeroed.getCurrentValue();
+      break;
+    case 18:
+      val = menuFaceCapillaryStartGrindNotZeroed.getCurrentValue();
+      break;
+    case 28:
+      val = menuFaceChipParametricStartGrindNotZeroed.getCurrentValue();
+      break;
+    case 32:
+      val = menuFaceChipSetDistanceStartGrindNotZeroed.getCurrentValue();
+      break;
+    default:
+      Serial.write("Error: Must include menu entry in setZeroed()");
+      break;
+  }
+  serlogF3(SER_USER_1, "id, value = ", id, val);
 
-    // 0 = zero, 1 = ignore
-    if (val == 0){
-        calibrateZero();
-    }
-    else {
-        //  Make start button visible/ hide not zeroed selector for all categories
-        menuGrindCapillaryStartGrindNotZeroed.setVisible(false);
-        menuFaceCapillaryStartGrindNotZeroed.setVisible(false);
-        menuFaceChipParametricStartGrindNotZeroed.setVisible(false);
-        menuFaceChipSetDistanceStartGrindNotZeroed.setVisible(false);
+  // 0 = zero, 1 = ignore
+  if (val == 0) {
+    calibrateZero();
+  }
+  else {
+    //  Make start button visible/ hide not zeroed selector for all categories
+    menuGrindCapillaryStartGrindNotZeroed.setVisible(false);
+    menuFaceCapillaryStartGrindNotZeroed.setVisible(false);
+    menuFaceChipParametricStartGrindNotZeroed.setVisible(false);
+    menuFaceChipSetDistanceStartGrindNotZeroed.setVisible(false);
 
-        menuGrindCapillaryStartGrindStart.setVisible(true);
-        menuFaceCapillaryStartGrindStart.setVisible(true);
-        menuFaceChipParametricStartGrindStart.setVisible(true);
-        menuFaceChipSetDistanceStartGrindStart.setVisible(true);
-    }
-    }
+    menuGrindCapillaryStartGrindStart.setVisible(true);
+    menuFaceCapillaryStartGrindStart.setVisible(true);
+    menuFaceChipParametricStartGrindStart.setVisible(true);
+    menuFaceChipSetDistanceStartGrindStart.setVisible(true);
+  }
+}
 
 void CALLBACK_FUNCTION moveOffset(int id = 0) {
-    internalMotorZStepCount = internalMotorZStepCount + ((menuCalibrateOffset.getCurrentValue()- internalCalibrateOffsetOldValue) * motorZstepsPerMicron);
-    internalCalibrateOffsetOldValue = menuCalibrateOffset.getCurrentValue();
-    moveMotorZ(0, 50, 0);
+  internalMotorZStepCount = internalMotorZStepCount + ((menuCalibrateOffset.getCurrentValue() - internalCalibrateOffsetOldValue) * motorZstepsPerMicron);
+  internalCalibrateOffsetOldValue = menuCalibrateOffset.getCurrentValue();
+  moveMotorZ(0, 50, 0);
 }
 
 
 void CALLBACK_FUNCTION startGrindCapillary(int id) {
-    menuMgr.save();
+  menuMgr.save();
 
-    int grindDelayTime = 20;
+  int grindDelayTime = 20;
 
-    float angleRad = menuGrindCapillaryAngleDegrees.getCurrentValue() * M_PI / 180;
-    int R = (minfoGrindCapillaryOuterDiameter.getCurrentValue() - minfoGrindCapillaryInnerDiameter.getCurrentValue()) / 2;
-    float GrindDepthRemaining = R * cos(AngleRad) - FaceWidth;
- 
-    startMotorCapillary();
+  float angleRad = menuGrindCapillaryAngleDegrees.getCurrentValue() * M_PI / 180;
+  int R = (minfoGrindCapillaryOuterDiameter.getCurrentValue() - minfoGrindCapillaryInnerDiameter.getCurrentValue()) / 2;
+  float GrindDepthRemaining = R * cos(AngleRad) - FaceWidth;
 
-    //Wait GrindDelayTime (default value is 20 seconds)
-    
-    // TODO
-    
-    /*
+  startMotorCapillary();
 
-                • If (GrindDepthRemaining/GrindStepDistance > 1)
-                    ◦ StepDistance = GrindStepDistance
-                    ◦ //(default value is 10 microns)
+  //Wait GrindDelayTime (default value is 20 seconds)
+
+  // TODO
+
+  /*
+
+              • If (GrindDepthRemaining/GrindStepDistance > 1)
+                  ◦ StepDistance = GrindStepDistance
+                  ◦ //(default value is 10 microns)
+                  ◦ Move down StepDistance
+                  ◦ At GrindSpeed rate
+                  ◦ //(default is 100 microns/second)
+                  ◦ GrindDepthRemaining = GrindDepthRemaining - StepDistance
+                  ◦ Wait GrindDelayTime
+              • Else if (GrindDepthRemaining/GrindStepDistance < 1)
+                  ◦ StepDistance = GrindDepthRemaining
+                  ◦ Move down StepDistance
+                  ◦ At GrindSpeed rate
+                  ◦ //(default is 100 microns/second)
+                  ◦ GrindDepthRemaining = GrindDepthRemaining - StepDistance
+                  ◦ Wait GrindDelayTime
+                  ◦ Move up 20,000 microns At TravelSpeed
+                      ▪ //default value is 2500 microns/second
+                  ◦ Give Grind complete message
+                      ▪ OK
+                          • Return to main menu
+              • Else
+                  ◦ Printscreen = “error grind distance”
+  */
+}
+
+
+void CALLBACK_FUNCTION startFaceCapillary(int id) {
+  menuMgr.save();
+  // TODO
+  /*
+   *            • If CapillaryRun = True
+                    ◦ Turn on Capillary motor
+                • Wait FaceDelayTime
+                • //default value is 60 seconds
+                • If (FaceDepthRemaining/FaceStepDistance > 1)
+                    ◦ StepDistance = FaceStepDistance
+                    ◦ //(default value is 1 microns)
                     ◦ Move down StepDistance
-                    ◦ At GrindSpeed rate 
-                    ◦ //(default is 100 microns/second)
-                    ◦ GrindDepthRemaining = GrindDepthRemaining - StepDistance
-                    ◦ Wait GrindDelayTime
-                • Else if (GrindDepthRemaining/GrindStepDistance < 1)
-                    ◦ StepDistance = GrindDepthRemaining
+                    ◦ At FaceSpeed rate 
+                    ◦ //(default is 1 microns/second)
+                    ◦ FaceDepthRemaining = FaceDepthRemaining - StepDistance
+                    ◦ Wait FaceDelayTime
+                • Else if (FaceDepthRemaining/FaceStepDistance < 1)
+                    ◦ StepDistance = FaceDepthRemaining
                     ◦ Move down StepDistance
-                    ◦ At GrindSpeed rate 
-                    ◦ //(default is 100 microns/second)
-                    ◦ GrindDepthRemaining = GrindDepthRemaining - StepDistance
+                    ◦ At FaceSpeed rate 
+                    ◦ //(default is 1 microns/second)
+                    ◦ FaceDepthRemaining = FaceDepthRemaining - StepDistance
                     ◦ Wait GrindDelayTime
                     ◦ Move up 20,000 microns At TravelSpeed
                         ▪ //default value is 2500 microns/second
@@ -246,37 +283,61 @@ void CALLBACK_FUNCTION startGrindCapillary(int id) {
                         ▪ OK
                             • Return to main menu
                 • Else
-                    ◦ Printscreen = “error grind distance”
-     */
-}
-
-
-void CALLBACK_FUNCTION startFaceCapillary(int id) {
-    menuMgr.save();
-    // TODO
+                    ◦ Printscreen = “error face distance”
+   */
 }
 
 
 void CALLBACK_FUNCTION startFaceChipParametric(int id) {
-    menuMgr.save();
-    // TODO
+  menuMgr.save();
+  // TODO
+    /*
+   *                ◦ Wait ChipDelayTime
+                    ◦ //Default is 30 seconds
+                    ◦ Move down FlatChannelDepth
+                    ◦ Wait ChipDelayTime
+                    ◦ If (ChipDepthRemaining/ChipStepDistance > 1)
+                        ▪ StepDistance = ChipStepDistance
+                        ▪ //(default value is 5 microns)
+                        ▪ Move down StepDistance
+                        ▪ At ChipSpeed rate 
+                        ▪ //(default is 1 microns/second)
+                        ▪ ChipDepthRemaining = ChipDepthRemaining - StepDistance
+                        ▪ Wait ChipDelayTime
+                    ◦ Else if (ChipDepthRemaining/ChipStepDistance < 1)
+                        ▪ StepDistance = ChipDepthRemaining
+                        ▪ Move down StepDistance
+                        ▪ At ChipSpeed rate 
+                        ▪ //(default is 1 microns/second)
+                        ▪ ChipDepthRemaining = ChipDepthRemaining - StepDistance
+                        ▪ Wait ChipDelayTime
+                        ▪ Move up 20,000 microns At TravelSpeed
+                            • //default value is 2500 microns/second
+                        ▪ Give Grind complete message
+                            • OK
+                                ◦ Return to main menu
+                    ◦ Else
+                        ▪ Printscreen = “error chip distance”
+
+
+   */
 }
 
 
 void CALLBACK_FUNCTION startFaceChipDistance(int id) {
-    menuMgr.save();
-    // TODO
+  menuMgr.save();
+  // TODO
 }
 
 // This will be called frequently by the renderer class
 // here we give control back when the button is clicked.
 void myDisplayCallback(unsigned int encoderValue, RenderPressMode clicked) {
-    // At this point clicked is the status of the select button
-    // it can be RPRESS_NONE, RPRESS_PRESSED or RPRESS_HELD
-    // encoderValue is the current value of the rotary encoder
-    /*TODO:
-      Display Grinding message when grinding
-      Display Zeroing Message when zeroing
-      cancel active task and return to menu when button clicked
-    */
+  // At this point clicked is the status of the select button
+  // it can be RPRESS_NONE, RPRESS_PRESSED or RPRESS_HELD
+  // encoderValue is the current value of the rotary encoder
+  /*TODO:
+    Display Grinding message when grinding
+    Display Zeroing Message when zeroing
+    cancel active task and return to menu when button clicked
+  */
 }
