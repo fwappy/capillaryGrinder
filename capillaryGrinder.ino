@@ -17,7 +17,8 @@ const int motorCapillaryStepsPerRev = 200;
 
 // Global Variables
 int internalCalibrateOffsetOldValue;
-int motorZTravelSpeed = 15;
+int menuState = 0;
+const int motorZTravelSpeed = 15;
 const int displayResetTime = 300;
 
 uint8_t motorCapillaryTaskId;
@@ -181,7 +182,8 @@ void CALLBACK_FUNCTION setZeroed(int id = 0) {
       val = menuFaceChipSetDistanceStartGrindNotZeroed.getCurrentValue();
       break;
     default:
-      Serial.write("Error: Must include menu entry in setZeroed()");
+      serlogF1(SER_ERROR, "Error: Must include menu entry in setZeroed()");
+      menuState = -10;
       break;
   }
   serlogF3(SER_USER_1, "id, value = ", id, val);
@@ -217,7 +219,7 @@ void CALLBACK_FUNCTION startGrindCapillary(int id) {
   int grindDelayTime = 20;
 
   float angleRad = menuGrindCapillaryAngleDegrees.getCurrentValue() * M_PI / 180;
-  int R = (minfoGrindCapillaryOuterDiameter.getCurrentValue() - minfoGrindCapillaryInnerDiameter.getCurrentValue()) / 2;
+  int R = (menuGrindCapillaryOuterDiameter.getCurrentValue() - menuGrindCapillaryInnerDiameter.getCurrentValue()) / 2;
   float GrindDepthRemaining = R * cos(AngleRad) - FaceWidth;
 
   startMotorCapillary();
@@ -256,10 +258,17 @@ void CALLBACK_FUNCTION startGrindCapillary(int id) {
 
 void CALLBACK_FUNCTION startFaceCapillary(int id) {
   menuMgr.save();
+
+  if (menuFaceCapillaryCapillaryMotor.getCurrentValue() == true) {
+    startMotorCapillary();
+  }
+  else {
+    stopMotorCapillary();
+  }
+  
   // TODO
   /*
-   *            • If CapillaryRun = True
-                    ◦ Turn on Capillary motor
+
                 • Wait FaceDelayTime
                 • //default value is 60 seconds
                 • If (FaceDepthRemaining/FaceStepDistance > 1)
@@ -335,9 +344,34 @@ void myDisplayCallback(unsigned int encoderValue, RenderPressMode clicked) {
   // At this point clicked is the status of the select button
   // it can be RPRESS_NONE, RPRESS_PRESSED or RPRESS_HELD
   // encoderValue is the current value of the rotary encoder
+
+  // menuState 0  | menu
+  // menuState 1  | grinding
+  // menuState 2  | zeroing
+  // menuState -x | error
+  if (clicked == true) {
+    menuState = 0;
+  }
+  switch (menuState) {
+   case 0:
+    stopMotorZ();
+    stopMotorCapillary();
+    renderer.giveBackDisplay();
+    
+  case 1:
+    // display "grinding"
+    
+  case 2:
+    // display "zeroing"
+    
+  default:
+    //display error (menuState)
+
+  }
+    
   /*TODO:
-    Display Grinding message when grinding
-    Display Zeroing Message when zeroing
+    Display Grinding message when grinding (displayState = 1)
+    Display Zeroing Message when zeroing (displayState = 2)
     cancel active task and return to menu when button clicked
   */
 }
