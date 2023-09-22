@@ -17,6 +17,7 @@ const int motorCapillaryStepsPerRev = 200;
 
 // Global Variables
 int internalCalibrateOffsetOldValue;
+int motorZTravelSpeed = 15;
 
 uint8_t motorCapillaryTaskId;
 bool internalMotorCapillaryStepState = LOW;
@@ -49,7 +50,7 @@ int MotorZPosition(){
   return (internalMotorZStepCount / motorZstepsPerMicron);
 }
 
-void moveMotorZ(int position, int speed, bool relative = 0) {  // speed in um/sec
+void moveMotorZ(int position, int speed = motorZTravelSpeed, bool relative = 0) {  // speed in um/sec
 
     // Calculate Steps based on position
     if (relative) {
@@ -103,7 +104,7 @@ void stopMotorZ() {
     taskManager.cancelTask(motorZTaskId);
 }
 
-void startMotorCapillary(int speed) {  //speed in rpm
+void startMotorCapillary(int speed = 10) {  //speed in rpm
     int delayTime = 1/(2*motorCapillaryStepsPerRev*speed);  // most definitely incorrect
   
     motorCapillaryTaskId = taskManager.schedule(repeatMillis(delayTime), internalMotorCapillaryStep);
@@ -209,7 +210,44 @@ void CALLBACK_FUNCTION moveOffset(int id = 0) {
 
 void CALLBACK_FUNCTION startGrindCapillary(int id) {
     menuMgr.save();
+
+    int grindDelayTime = 20;
+
+    float angleRad = menuGrindCapillaryAngleDegrees.getCurrentValue() * M_PI / 180;
+    int R = (minfoGrindCapillaryOuterDiameter.getCurrentValue() - minfoGrindCapillaryInnerDiameter.getCurrentValue()) / 2;
+    float GrindDepthRemaining = R * cos(AngleRad) - FaceWidth;
+ 
+    startMotorCapillary();
+
+    //Wait GrindDelayTime (default value is 20 seconds)
+    
     // TODO
+    
+    /*
+
+                • If (GrindDepthRemaining/GrindStepDistance > 1)
+                    ◦ StepDistance = GrindStepDistance
+                    ◦ //(default value is 10 microns)
+                    ◦ Move down StepDistance
+                    ◦ At GrindSpeed rate 
+                    ◦ //(default is 100 microns/second)
+                    ◦ GrindDepthRemaining = GrindDepthRemaining - StepDistance
+                    ◦ Wait GrindDelayTime
+                • Else if (GrindDepthRemaining/GrindStepDistance < 1)
+                    ◦ StepDistance = GrindDepthRemaining
+                    ◦ Move down StepDistance
+                    ◦ At GrindSpeed rate 
+                    ◦ //(default is 100 microns/second)
+                    ◦ GrindDepthRemaining = GrindDepthRemaining - StepDistance
+                    ◦ Wait GrindDelayTime
+                    ◦ Move up 20,000 microns At TravelSpeed
+                        ▪ //default value is 2500 microns/second
+                    ◦ Give Grind complete message
+                        ▪ OK
+                            • Return to main menu
+                • Else
+                    ◦ Printscreen = “error grind distance”
+     */
 }
 
 
@@ -228,4 +266,17 @@ void CALLBACK_FUNCTION startFaceChipParametric(int id) {
 void CALLBACK_FUNCTION startFaceChipDistance(int id) {
     menuMgr.save();
     // TODO
+}
+
+// This will be called frequently by the renderer class
+// here we give control back when the button is clicked.
+void myDisplayCallback(unsigned int encoderValue, RenderPressMode clicked) {
+    // At this point clicked is the status of the select button
+    // it can be RPRESS_NONE, RPRESS_PRESSED or RPRESS_HELD
+    // encoderValue is the current value of the rotary encoder
+    /*TODO:
+      Display Grinding message when grinding
+      Display Zeroing Message when zeroing
+      cancel active task and return to menu when button clicked
+    */
 }
