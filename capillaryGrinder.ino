@@ -29,6 +29,20 @@ bool internalMotorZStepState = LOW;
 long internalMotorZStepCount = 0;
 long internalMotorZStepGoal;
 
+// Function declarations
+int MotorZPosition();
+void moveMotorZ(int position, int speed = motorZTravelSpeed, bool relative = 1); // speed in um/sec
+void internalMotorZStepInc();
+void internalMotorZStepDec();
+void stopMotorz();
+void startMotorCapillary(int speed = 10); // speed in rpm
+void internalMotorCapillaryStep();
+void stopMotorCapillary();
+int getMenuItemValue(int id);
+
+
+
+
 void setup() {
   Serial.begin(9600);
   setupMenu();
@@ -130,6 +144,37 @@ int getMenuItemValue(int id) {
 
 }
 
+void grindPass(int& totalDepth, int& passDepth, int& grindRate, float& delayTime) {
+  moveMotorZ(-1 * passDepth, grindRate, 1);
+  totalDepth = totalDepth - passDepth
+  if (passDepth <= TotalDepth) {
+    taskManager.schedule(onceSeconds(delayTime), grindPass(totalDepth, passDepth, grindRate, delayTime));
+  }
+
+                • If (FaceDepthRemaining/FaceStepDistance > 1)
+                    ◦ StepDistance = FaceStepDistance
+                    ◦ //(default value is 1 microns)
+                    ◦ Move down StepDistance
+                    ◦ At FaceSpeed rate 
+                    ◦ //(default is 1 microns/second)
+                    ◦ FaceDepthRemaining = FaceDepthRemaining - StepDistance
+                    ◦ Wait FaceDelayTime
+                • Else if (FaceDepthRemaining/FaceStepDistance < 1)
+                    ◦ StepDistance = FaceDepthRemaining
+                    ◦ Move down StepDistance
+                    ◦ At FaceSpeed rate 
+                    ◦ //(default is 1 microns/second)
+                    ◦ FaceDepthRemaining = FaceDepthRemaining - StepDistance
+                    ◦ Wait GrindDelayTime
+                    ◦ Move up 20,000 microns At TravelSpeed
+                        ▪ //default value is 2500 microns/second
+                    ◦ Give Grind complete message
+                        ▪ OK
+                            • Return to main menu
+                • Else
+                    ◦ Printscreen = “error face distance”
+}
+
 void CALLBACK_FUNCTION calibrateZero(int id = 0) {
   // display "Calibrating" message
   menuState = 2;
@@ -222,39 +267,15 @@ void CALLBACK_FUNCTION startGrindCapillary(int id) {
 
   float angleRad = menuGrindCapillaryAngleDegrees.getCurrentValue() * M_PI / 180;
   int R = (menuGrindCapillaryOuterDiameter.getCurrentValue() - menuGrindCapillaryInnerDiameter.getCurrentValue()) / 2;
-  float GrindDepthRemaining = R * cos(AngleRad) - FaceWidth;
+  float totalDepth = R * cos(AngleRad) - FaceWidth;
 
   startMotorCapillary();
 
-  //Wait GrindDelayTime (default value is 20 seconds)
-
   // TODO
+// add ability to set feedDepth, delaty time, total depth in UI
 
-  /*
+  taskManager.schedule(onceSeconds(delayTime), grindPass(totalDepth, passDepth, grindRate, delayTime));
 
-              • If (GrindDepthRemaining/GrindStepDistance > 1)
-                  ◦ StepDistance = GrindStepDistance
-                  ◦ //(default value is 10 microns)
-                  ◦ Move down StepDistance
-                  ◦ At GrindSpeed rate
-                  ◦ //(default is 100 microns/second)
-                  ◦ GrindDepthRemaining = GrindDepthRemaining - StepDistance
-                  ◦ Wait GrindDelayTime
-              • Else if (GrindDepthRemaining/GrindStepDistance < 1)
-                  ◦ StepDistance = GrindDepthRemaining
-                  ◦ Move down StepDistance
-                  ◦ At GrindSpeed rate
-                  ◦ //(default is 100 microns/second)
-                  ◦ GrindDepthRemaining = GrindDepthRemaining - StepDistance
-                  ◦ Wait GrindDelayTime
-                  ◦ Move up 20,000 microns At TravelSpeed
-                      ▪ //default value is 2500 microns/second
-                  ◦ Give Grind complete message
-                      ▪ OK
-                          • Return to main menu
-              • Else
-                  ◦ Printscreen = “error grind distance”
-  */
 }
 
 
