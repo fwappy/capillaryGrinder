@@ -144,8 +144,8 @@ int getMenuItemValue(int id) {
 
 }
 
-void grindPass(int& depthRemaining, int& passDepth, int& grindRate, float& delayTime, bool done) {
-  moveMotorZ(-1 * passDepth, grindRate, 1);
+void grindPass(int& depthRemaining, int& passDepth, int& grindRate, float& delayTime) {
+    moveMotorZ(-1 * passDepth, grindRate, 1);
   depthRemaining = depthRemaining - passDepth
   if (passDepth <= depthRemaining) {
     taskManager.schedule(onceSeconds(delayTime), grindPass(depthRemaining, passDepth, grindRate, delayTime));
@@ -154,16 +154,17 @@ void grindPass(int& depthRemaining, int& passDepth, int& grindRate, float& delay
     passDepth = depthRemaining
     taskManager.schedule(onceSeconds(delayTime), grindPass(depthRemaining, passDepth, grindRate, delayTime));
   }
-  else if (done = 1) {
-    moveMotorZ(0, , 0);
-    // return to UI
-  }
   else if (depthRemaining = 0) {
-    taskManager.schedule(onceSeconds(delayTime), grindPass(depthRemaining, passDepth, grindRate, delayTime, 1));
+    taskManager.schedule(onceSeconds(delayTime), grindDone);
   }
   else {
     serlogF2(SER_ERROR, "Error: Grind operation went too far! Position relative to target in um:", depthRemaining);
   }
+}
+
+void grindDone() {
+    moveMotorZ(0, , 0);
+    // return to UI
 }
 
 void CALLBACK_FUNCTION calibrateZero(int id = 0) {
