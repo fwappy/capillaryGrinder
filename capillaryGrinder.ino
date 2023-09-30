@@ -18,7 +18,7 @@ const int motorCapillaryStepsPerRev = 200;
 // Global Variables
 int internalCalibrateOffsetOldValue;
 int menuState = 0;
-const int motorZTravelSpeed = 15;
+const int motorZTravelSpeed = 2500;
 const int displayResetTime = 300;
 
 uint8_t motorCapillaryTaskId;
@@ -39,7 +39,7 @@ void startMotorCapillary(int speed = 10); // speed in rpm
 void internalMotorCapillaryStep();
 void stopMotorCapillary();
 int getMenuItemValue(int id);
-
+void grindPass(int& depthRemaining, int& passDepth, int& grindRate, float& delayTime, bool done = 0);
 
 
 
@@ -55,7 +55,7 @@ void setup() {
   internalDigitalDevice().pinMode(motorCapillaryDirectionPin, OUTPUT);
   internalDigitalDevice().pinMode(motorCapillaryEnablePin, OUTPUT);
 
-  internalCalibrateOffsetOldValue = menuCalibrateOffset.getCurrentValue();
+  internalCalibrateOffsetOldValue = menuCalibrateOffset.getWhole();
 
   renderer.setResetIntervalTimeSeconds(displayResetTime);
 }
@@ -144,35 +144,26 @@ int getMenuItemValue(int id) {
 
 }
 
-void grindPass(int& totalDepth, int& passDepth, int& grindRate, float& delayTime) {
+void grindPass(int& depthRemaining, int& passDepth, int& grindRate, float& delayTime, bool done) {
   moveMotorZ(-1 * passDepth, grindRate, 1);
-  totalDepth = totalDepth - passDepth
-  if (passDepth <= TotalDepth) {
-    taskManager.schedule(onceSeconds(delayTime), grindPass(totalDepth, passDepth, grindRate, delayTime));
+  depthRemaining = depthRemaining - passDepth
+  if (passDepth <= depthRemaining) {
+    taskManager.schedule(onceSeconds(delayTime), grindPass(depthRemaining, passDepth, grindRate, delayTime));
   }
-
-                • If (FaceDepthRemaining/FaceStepDistance > 1)
-                    ◦ StepDistance = FaceStepDistance
-                    ◦ //(default value is 1 microns)
-                    ◦ Move down StepDistance
-                    ◦ At FaceSpeed rate 
-                    ◦ //(default is 1 microns/second)
-                    ◦ FaceDepthRemaining = FaceDepthRemaining - StepDistance
-                    ◦ Wait FaceDelayTime
-                • Else if (FaceDepthRemaining/FaceStepDistance < 1)
-                    ◦ StepDistance = FaceDepthRemaining
-                    ◦ Move down StepDistance
-                    ◦ At FaceSpeed rate 
-                    ◦ //(default is 1 microns/second)
-                    ◦ FaceDepthRemaining = FaceDepthRemaining - StepDistance
-                    ◦ Wait GrindDelayTime
-                    ◦ Move up 20,000 microns At TravelSpeed
-                        ▪ //default value is 2500 microns/second
-                    ◦ Give Grind complete message
-                        ▪ OK
-                            • Return to main menu
-                • Else
-                    ◦ Printscreen = “error face distance”
+  else if (depthRemaining > 0){
+    passDepth = depthRemaining
+    taskManager.schedule(onceSeconds(delayTime), grindPass(depthRemaining, passDepth, grindRate, delayTime));
+  }
+  else if (done = 1) {
+    moveMotorZ(0, , 0);
+    // return to UI
+  }
+  else if (depthRemaining = 0) {
+    taskManager.schedule(onceSeconds(delayTime), grindPass(depthRemaining, passDepth, grindRate, delayTime, 1));
+  }
+  else {
+    serlogF2(SER_ERROR, "Error: Grind operation went too far! Position relative to target in um:", depthRemaining);
+  }
 }
 
 void CALLBACK_FUNCTION calibrateZero(int id = 0) {
@@ -194,7 +185,7 @@ void CALLBACK_FUNCTION calibrateZero(int id = 0) {
   moveMotorZ(15, 1, 1);
 
   // set zero position
-  internalMotorZStepCount = 0 + (menuCalibrateOffset.getCurrentValue() * motorZstepsPerMicron);
+  internalMotorZStepCount = 0 + (menuCalibrateOffset.getWhole() * motorZstepsPerMicron);
 
   // clear Not Zeroed entries
   setZeroed();
@@ -252,8 +243,8 @@ void setZeroed() {
 }
 
 void CALLBACK_FUNCTION moveOffset(int id = 0) {
-  internalMotorZStepCount = internalMotorZStepCount + ((menuCalibrateOffset.getCurrentValue() - internalCalibrateOffsetOldValue) * motorZstepsPerMicron);
-  internalCalibrateOffsetOldValue = menuCalibrateOffset.getCurrentValue();
+  internalMotorZStepCount = internalMotorZStepCount + ((menuCalibrateOffset.getWhole() - internalCalibrateOffsetOldValue) * motorZstepsPerMicron);
+  internalCalibrateOffsetOldValue = menuCalibrateOffset.getWhole();
   moveMotorZ(0, 50, 0);
 }
 
@@ -267,14 +258,14 @@ void CALLBACK_FUNCTION startGrindCapillary(int id) {
 
   float angleRad = menuGrindCapillaryAngleDegrees.getCurrentValue() * M_PI / 180;
   int R = (menuGrindCapillaryOuterDiameter.getCurrentValue() - menuGrindCapillaryInnerDiameter.getCurrentValue()) / 2;
-  float totalDepth = R * cos(AngleRad) - FaceWidth;
+  float depthRemaining = R * cos(AngleRad) - FaceWidth;
 
   startMotorCapillary();
 
   // TODO
 // add ability to set feedDepth, delaty time, total depth in UI
 
-  taskManager.schedule(onceSeconds(delayTime), grindPass(totalDepth, passDepth, grindRate, delayTime));
+  taskManager.schedule(onceSeconds(delayTime), grindPass(depthRemaining, passDepth, grindRate, delayTime));
 
 }
 
