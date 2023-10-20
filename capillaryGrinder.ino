@@ -55,7 +55,7 @@ void setup() {
   internalDigitalDevice().pinMode(motorCapillaryDirectionPin, OUTPUT);
   internalDigitalDevice().pinMode(motorCapillaryEnablePin, OUTPUT);
 
-  internalCalibrateOffsetOldValue = menuCalibrateOffset.getWhole();
+  internalCalibrateOffsetOldValue = menuCalibrateOffset.getLargeNumber() -> getWhole();
 
   renderer.setResetIntervalTimeSeconds(displayResetTime);
 }
@@ -186,7 +186,7 @@ void CALLBACK_FUNCTION calibrateZero(int id = 0) {
   moveMotorZ(15, 1, 1);
 
   // set zero position
-  internalMotorZStepCount = 0 + (menuCalibrateOffset.getWhole() * motorZstepsPerMicron);
+  internalMotorZStepCount = 0 + (menuCalibrateOffset.getLargeNumber() * motorZstepsPerMicron);
 
   // clear Not Zeroed entries
   setZeroed();
@@ -244,8 +244,8 @@ void setZeroed() {
 }
 
 void CALLBACK_FUNCTION moveOffset(int id = 0) {
-  internalMotorZStepCount = internalMotorZStepCount + ((menuCalibrateOffset.getWhole() - internalCalibrateOffsetOldValue) * motorZstepsPerMicron);
-  internalCalibrateOffsetOldValue = menuCalibrateOffset.getWhole();
+  internalMotorZStepCount = internalMotorZStepCount + ((menuCalibrateOffset.getLargeNumber() - internalCalibrateOffsetOldValue) * motorZstepsPerMicron);
+  internalCalibrateOffsetOldValue = menuCalibrateOffset.getLargeNumber() -> getWhole();
   moveMotorZ(0, 50, 0);
 }
 
