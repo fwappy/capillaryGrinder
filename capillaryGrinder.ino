@@ -68,7 +68,7 @@ int MotorZPosition() {
   return (internalMotorZStepCount / motorZstepsPerMicron);
 }
 
-void moveMotorZ(int position, int speed = motorZTravelSpeed, bool relative = 0) {  // speed in um/sec
+void moveMotorZ(int position, int speed, bool relative) {  // speed in um/sec
 
   // Calculate Steps based on position
   if (relative) {
@@ -122,7 +122,7 @@ void stopMotorZ() {
   taskManager.cancelTask(motorZTaskId);
 }
 
-void startMotorCapillary(int speed = 10) {  //speed in rpm
+void startMotorCapillary(int speed) {  //speed in rpm
   int delayTime = 1 / (2 * motorCapillaryStepsPerRev * speed); // most definitely incorrect
 
   motorCapillaryTaskId = taskManager.schedule(repeatMillis(delayTime), internalMotorCapillaryStep);
@@ -146,9 +146,9 @@ int getMenuItemValue(int id) {
 
 void grindPass(int& depthRemaining, int& passDepth, int& grindRate, float& delayTime) {
     moveMotorZ(-1 * passDepth, grindRate, 1);
-  depthRemaining = depthRemaining - passDepth
+  depthRemaining = depthRemaining - passDepth;
   if (passDepth <= depthRemaining) {
-    taskManager.schedule(onceSeconds(delayTime), grindPass(depthRemaining, passDepth, grindRate, delayTime));
+    taskManager.schedule(onceSeconds(delayTime), grindPass(depthRemaining*, passDepth*, grindRate*, delayTime*));
   }
   else if (depthRemaining > 0){
     passDepth = depthRemaining
@@ -163,7 +163,7 @@ void grindPass(int& depthRemaining, int& passDepth, int& grindRate, float& delay
 }
 
 void grindDone() {
-    moveMotorZ(0, , 0);
+    moveMotorZ(0, motorZTravelSpeed, 0); // shouldnt need to explicitly set motor speed to motorZTravelSpeed, but its not compiling
     // return to UI
 }
 
@@ -358,7 +358,7 @@ void CALLBACK_FUNCTION startFaceChipDistance(int id) {
   menuMgr.save();
   // TODO
 }
-
+/*
 // This will be called frequently by the renderer class
 // here we give control back when the button is clicked.
 void myDisplayCallback(unsigned int encoderValue, RenderPressMode clicked) {
